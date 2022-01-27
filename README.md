@@ -185,11 +185,11 @@ the updated '.config' file back to the build file 'config'.
   sign modules is to make a soft link:
 
   $ cd /etc/dkms
-  # ln -s kernel-sign.conf <package-name>
+  # ln -s kernel-sign.conf <package-name>.conf
 
   For example:
 
-  # ln -s kernel-sign.conf virtualbox
+  # ln -s kernel-sign.conf virtualbox.conf
 
   The link creation can easily be added to an arch package to simplify further if desired.
 
