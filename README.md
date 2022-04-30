@@ -28,8 +28,8 @@ This provides the tools needed to build a kernel with support for signed modules
         7. certs-local/fix_config.sh
 
 ### See:
-    - <https://wiki.archlinux.org/title/Signed_kernel_modules> 
-    - <https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html>
+    - [Arch Wiki on signed kernel modules] (https://wiki.archlinux.org/title/Signed_kernel_modules)
+    - [Kernel Docs on module signing] (https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
 
 # 1. Introduction                                     |
 
@@ -47,7 +47,6 @@ needed using DKMS <https://wiki.archlinux.org/index.php/DKMS>.
 Examples of such packages, provided by Arch, include:
 
   - virtualbox-guest-modules-arch <https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch> 
-  - wireguard-arch <https://www.archlinux.org/packages/?name=wireguard-arch>.
 
 During a standard kernel compilation, the kernel build tools create a private/public key pair and 
 sign every in tree module (using the private key). The public key is saved in the kernel itself. 
