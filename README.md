@@ -88,14 +88,14 @@ A kernel config parameter is now used to make kernel aware of additional signing
 
 Keys and signing tools will be stored in current module build directory. Nothing needs to be done to 
 clean this as removal is handled by the standard module cleanup. Certs are thus 
-installed in /usr/lib/modules/<kernel-vers>-<build>/certs-local.  It is preferable to use elliptic curve type keys and zstd compression. 
+installed in /usr/lib/modules/<kernel-vers>-<build>/certs-local.  
 
 #     4. Kernel configuration  
 
 CONFIG_SYSTEM_TRUSTED_KEYS will be added automatically as explained below. 
 In addition the following config options should be set by either manually editing the 
 'config' file, or via make menuconfig in the linux 'src' area and subsequently copying 
-the updated '.config' file back to the build file 'config'.
+the updated '.config' file back to the build file 'config'.  It is preferable to use elliptic curve type keys and zstd compression. 
 
   - CONFIG_MODULE_SIG=y
     Enable Loadable module suppot --->
