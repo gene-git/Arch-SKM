@@ -1,41 +1,37 @@
-+---------------------------------------------------------+
-|     OVERVIEW                                            |
-+---------------------------------------------------------+
+
+# OVERVIEW 
 
 Signed kernel modules provide a mechanism for the kernel to verify the integrity of a module.
 This provides the tools needed to build a kernel with support for signed modules.
 
-Contents
+## Contents
 
-    1 Introduction
-    2 How to sign kernel modules using a custom kernel
-    3 Summary of what needs to be done
-    4 Kernel configuration
-        4.1 Kernel command line
-    5 Tools needed
-        5.1 kernel build package
-        5.2 dkms support
-    6 Modify PKGBUILD
-        6.1 prepare()
-        6.2 _package-headers()
-    7 Files Required
-        7.1 certs-local/x509.oot.genkey
-        7.2 certs-local/genkeys.py
-        7.3 certs-local/sign_manual.sh
-        7.4 certs-local/dkms/kernel-sign.conf
-        7.5 certs-local/dkms/kernel-sign.sh
+    1. Introduction
+    2. How to sign kernel modules using a custom kernel
+    3. Summary of what needs to be done
+    4. Kernel configuration
+        1. Kernel command line
+    5. Tools needed
+        1. kernel build package
+        2. dkms support
+    6. Modify PKGBUILD
+        1. prepare()
+        2. _package-headers()
+    7. Files Required
+        1. certs-local/x509.oot.genkey
+        2. certs-local/genkeys.py
+        3. certs-local/sign_manual.sh
+        4. certs-local/dkms/kernel-sign.conf
+        5. certs-local/dkms/kernel-sign.sh
         - Alternative bash versions
-        7.6 certs-local/genkeys.sh
-        7.7 certs-local/fix_config.sh
+        6. certs-local/genkeys.sh
+        7. certs-local/fix_config.sh
 
-See:
-    https://wiki.archlinux.org/title/Signed_kernel_modules 
-    https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html
-    https://wiki.archlinux.org/index.php/Kernel_modules
+### See:
+    - <https://wiki.archlinux.org/title/Signed_kernel_modules> 
+    - <https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html>
 
-+---------------------------------------------------------+
-|     1. Introduction                                     |
-+---------------------------------------------------------+
+# 1. Introduction                                     |
 
 The Linux kernel distinguishes and keeps separate the verification of modules from requiring or 
 forcing modules to verify before allowing them to be loaded. Kernel modules fall into 2 classes:
@@ -63,9 +59,7 @@ The choice to permit the loading and use of a module which could not be verified
 compiled into kernel or turned on at run time using a kernel parameter as explained below.
 (https://wiki.archlinux.org/index.php/Kernel_parameter)
 
-+---------------------------------------------------------+
-|     2. How to sign kernel modules using a custom kernel |  
-+---------------------------------------------------------+
+# 2. How to sign kernel modules using a custom kernel |  
 
 The starting point is based on a custom kernel package as outlined in this article Kernel/Arch Build System. 
 (https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System)
@@ -83,9 +77,7 @@ Note: The goal here is to have:
   - Out of tree modules are signed and the associated public key is compiled in to the kernel.
     We will create a separate public/private key pair on each build.
 
-+---------------------------------------------------------+
-|     3. Summary of what needs to be done                 |
-+---------------------------------------------------------+
+#     3. Summary of what needs to be done                 |
 
 Each kernel build needs to made aware of the key/cert being used. Fresh keys are 
 generated with each new kernel build.
@@ -98,9 +90,7 @@ Keys and signing tools will be stored in current module build directory. Nothing
 clean this as removal is handled by the standard module cleanup. Certs are thus 
 installed in /usr/lib/modules/<kernel-vers>-<build>/certs-local
 
-+---------------------------------------------------------+
-|     4. Kernel configuration                             |
-+---------------------------------------------------------+
+#     4. Kernel configuration                             |
 
 CONFIG_SYSTEM_TRUSTED_KEYS will be added automatically as explained below. 
 In addition the following config options should be set by either manually editing the 
@@ -135,22 +125,16 @@ the updated '.config' file back to the build file 'config'.
     Enable Loadable module suppot --->
         Allow loading of modules with missing namespace imports -> set off 
 
-  +----------------------------+
-  |  4.1 Kernel command line   |
-  +----------------------------+
+## 4.1 Kernel command line 
 
   After you are comfortable things are working well you can enable the kernel parameter to 
   require that the kernel only permit verified modules to be loaded:
 
     module.sig_enforce=1
 
-+---------------------------------------------------------+
-|     5. Tools needed                                     |
-+---------------------------------------------------------+
+# 5. Tools needed 
 
-  +-------------------------------+
-  |     5.1 kernel build package  |
-  +-------------------------------+
+## 5.1 kernel build package  |
 
   In the directory where the kernel package is built:
 
@@ -178,9 +162,7 @@ the updated '.config' file back to the build file 'config'.
 
   These files are all provided.
 
-  +-------------------------------+
-  |     5.2 dkms support          |
-  +-------------------------------+
+  ## 5.2 dkms support
 
   $ mkdir certs-local/dkms
 
@@ -203,15 +185,11 @@ the updated '.config' file back to the build file 'config'.
 
   The link creation can easily be added to an arch package to simplify further if desired.
 
-+---------------------------------------------------------+
-|     6. Modify PKGBUILD                                  |
-+---------------------------------------------------------+
+# 6. Modify PKGBUILD 
 
 We need to make changes to kernel build as follows:
 
-  +-------------------------------+
-  |     6.1 prepare()             |
-  +-------------------------------+
+## 6.1 prepare()
 
   Add the following to the top of the prepare() function:
 
@@ -224,9 +202,7 @@ We need to make changes to kernel build as follows:
       ... 
   }
 
-  +-------------------------------+
-  |     6.2 _package-headers()    |
-  +-------------------------------+
+## 6.2 _package-headers() 
 
   Add the following to the bottom of the _package-headers() function:
 
@@ -256,9 +232,7 @@ We need to make changes to kernel build as follows:
       rsync -a $dkms_src/{kernel-sign.conf,kernel-sign.sh} $dkms_dst/
   }
 
-+---------------------------------------------------------+
-|     7. Files Required                                   |
-+---------------------------------------------------------+
+# 7. Files Required 
 
 These are the 5 supporting files referenced above. Do not forget to make the scripts executable.
 
