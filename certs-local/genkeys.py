@@ -286,7 +286,7 @@ def check_refresh(conf):
         return ok
 
     kfile = os.path.join('current', 'signing_key.pem')
-    if os.path.exists(fname) :
+    if os.path.exists(kfile) :
         mod_time = os.path.getmtime(kfile)
         curr_dt = datetime.datetime.fromtimestamp(mod_time)
 
