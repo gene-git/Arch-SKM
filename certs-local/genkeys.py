@@ -51,7 +51,7 @@ def initialize() :
     refresh = '7d'
     kconfig = '../config'
 
-    ap.add_argument('-r',  '--refresh', help='key refresh period (' + refresh + ') Example "7days" or "24h"')
+    ap.add_argument('-r',  '--refresh', help='key refresh period (' + refresh + ') Example "7days",  "24h" or "always"')
     ap.add_argument('-c',  '--config',  help='Kernel Config file (' + kconfig + ') - updated with new key')
     ap.add_argument('-v',  '--verb', action='store_true', help='Verbose')
 
@@ -268,6 +268,8 @@ def check_refresh(conf):
     refresh = conf.get('refresh')
     if not refresh:
         return ok
+    if refresh.lower() == 'always':
+        return ok
 
     # get the refresh time
     parse = re.findall('(\d+)(\w+)', refresh)[0]
@@ -308,10 +310,14 @@ def main():
 
     #pdb.set_trace()
     conf = initialize()
+    verb = conf['verb']
+
     key_refresh = check_refresh(conf)
     if key_refresh:
+        if verb:
+            print ('Refreshing keys')
         ok = make_new_keys (conf)
-    elif conf['verb']:
+    elif verb:
         print ('Not time to refresh keys')
 
     ok = update_config(conf )
