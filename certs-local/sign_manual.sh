@@ -9,11 +9,10 @@
 #  Uses dirs :
 #    Tmp   - working directory
 #
-# Requires:
+# Requires: bash,  rsync, hexdump, zstd, xz
 # 
-# Ensure that signing is idempotent.
+# Ensures that signing is idempotent.
 #
-# Gene 20191110
 
 #
 # Inputs
@@ -46,7 +45,8 @@ echo "Module signing key : $KEY"
 function is_signed () {
      f=$1
      has_sig='n'
-     hexdump -C $f |tail  |grep 'Module sign' > /dev/null
+     #hexdump -C $f |tail  |grep 'Module sign' > /dev/null
+     hexdump --e '"%_p"' $f |tail  |grep 'Module sign' > /dev/null
      rc=$?
      if [ $rc = 0 ] ; then
          has_sig='y' 
@@ -82,11 +82,20 @@ do
 
     ext=${mod##*.}
     isxz='n'
+    iszstd='n'
+
     if [ "$ext" = "xz" ] ; then
         echo "Decompressing :"
         isxz='y'
         xz -f --decompress $mod_tmp
         mod_tmp=${mod_tmp%*.xz}
+    fi
+
+    if [ "$ext" = "zstd" ] ; then
+        echo "Decompressing :"
+        iszstd='y'
+        zstd -f --decompress $mod_tmp
+        mod_tmp=${mod_tmp%*.zstd}
     fi
 
     #
@@ -107,6 +116,13 @@ do
         mod_tmp=${mod_tmp}.xz
     fi
 
+    if [ "$iszstd" = "y" ] ; then
+        echo "Compressing:"
+        zstd -f $mod_tmp
+        mod_tmp=${mod_tmp}.zstd
+    fi
+
+
     #
     # backup current and install newly signed module
     # How to backup without older module being treated as a real module?
@@ -122,5 +138,7 @@ do
 done
 
 exit 
+
+
 
 

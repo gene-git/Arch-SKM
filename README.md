@@ -1,5 +1,3 @@
-
-
 +---------------------------------------------------------+
 |     OVERVIEW                                            |
 +---------------------------------------------------------+
@@ -21,15 +19,19 @@ Contents
         6.1 prepare()
         6.2 _package-headers()
     7 Files Required
-        7.1 certs-local/fix_config.sh
-        7.2 certs-local/x509.oot.genkey
-        7.3 certs-local/genkeys.sh
-        7.4 certs-local/sign_manual.sh
-        7.5 certs-local/dkms/kernel-sign.conf
-        7.6 certs-local/dkms/kernel-sign.sh
+        7.1 certs-local/x509.oot.genkey
+        7.2 certs-local/genkeys.py
+        7.3 certs-local/sign_manual.sh
+        7.4 certs-local/dkms/kernel-sign.conf
+        7.5 certs-local/dkms/kernel-sign.sh
+        - Alternative bash versions
+        7.6 certs-local/genkeys.sh
+        7.7 certs-local/fix_config.sh
 
-See: https://www.kernel.org/doc/html/v5.4-rc7/admin-guide/module-signing.html
-     https://wiki.archlinux.org/index.php/Kernel_modules
+See:
+    https://wiki.archlinux.org/title/Signed_kernel_modules 
+    https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html
+    https://wiki.archlinux.org/index.php/Kernel_modules
 
 +---------------------------------------------------------+
 |     1. Introduction                                     |
@@ -105,24 +107,33 @@ In addition the following config options should be set by either manually editin
 'config' file, or via make menuconfig in the linux 'src' area and subsequently copying 
 the updated '.config' file back to the build file 'config'.
 
-  Enable Loadable module suppot --->
-  Module Signature Verification           -  activate
-        CONFIG_MODULE_SIG=y
+  - CONFIG_MODULE_SIG=y
+    Enable Loadable module suppot --->
+    Module Signature Verification           -  activate
 
-  Require modules to be validly signed -> leave off
-        CONFIG_MODULE_SIG_FORCE=n
+  - CONFIG_MODULE_SIG_FORCE=n
+    Require modules to be validly signed -> leave off
 
         This allows the decision to enforce verified modules only as boot command line.
         If you are comfortable all is working then by all means change this to 'y'
         Command line version of this is : module.sig_enforce=1
 
-  Automatically sign all modules  - activate
-  Which hash algorithm    -> SHA-512
+  - CONFIG_MODULE_SIG_HASH=sha512
+    Automatically sign all modules  - activate
+    Which hash algorithm    -> SHA-512
 
-  Compress modules on installation        - activate
-        Compression algorithm (XZ)
+  - CONFIG_MODULE_COMPRESS_ZSTD=y
+    Compress modules on installation        - activate
+        Compression algorithm (ZSTD)
 
-  Allow loading of modules with missing namespace imports - set to no
+  - CONFIG_MODULE_SIG_KEY_TYPE_ECDSA=y
+    Cryptographic API --->
+        Certificates for Signature Checking --->
+            Type of module signing key to be generated -> ECDSA
+
+  - CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
+    Enable Loadable module suppot --->
+        Allow loading of modules with missing namespace imports -> set off 
 
   +----------------------------+
   |  4.1 Kernel command line   |
@@ -147,24 +158,23 @@ the updated '.config' file back to the build file 'config'.
 
   This directory will provide the tools to create the keys, as well as signing kernel modules.
 
-  Put the 4 files into certs-local:
+  Put the 3 files into certs-local:
 
-    fix_config.sh
     x509.oot.genkey
-    genkeys.sh
+    genkeys.py
     sign_manual.sh
 
-  The files genkeys.sh and its config x509.oot.genkey are used to create key pairs.
+  The files genkeys.py and its config x509.oot.genkey are used to create key pairs.
+  It also provides the kernel with the key to sign the out of tree modules,  by updating the config file 
+  used to build the kernel.
 
-  The file fix_config.sh is run after that to provide the kernel with the key info by 
-  updating the config file used to build the kernel.
+  The script sign_manual is used to sign out of tree kernel modules by hand.
 
-  The script sign_manual will be used to sign out of tree kernel modules.
+  genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
+  the keys every 7 days but this can be changed.
 
-  genkeys.sh will create the key pairs in a directory named by date-time.
-
-  It also creates file 'current_key_dir' with that directory name and a soft link 'current' 
-  to the same directory with the 'current' key pairs.
+  It also creates synlink 'current' which pointd to the newly created directory with the 'current' key pairs.
+  The key directory is named by date and time.
 
   These files are all provided.
 
@@ -185,11 +195,11 @@ the updated '.config' file back to the build file 'config'.
   sign modules is to make a soft link:
 
   $ cd /etc/dkms
-  # ln -s kernel-sign.conf <package-name>
+  # ln -s kernel-sign.conf <module-name>.conf
 
   For example:
 
-  # ln -s kernel-sign.conf virtualbox
+  # ln -s kernel-sign.conf vboxdrv.conf
 
   The link creation can easily be added to an arch package to simplify further if desired.
 
@@ -209,12 +219,8 @@ We need to make changes to kernel build as follows:
 
       msg2 "Rebuilding local signing key..."
       cd ../certs-local
-      ./genkeys.sh 
-
-      msg2 "Updating kernel config with new key..."
-      ./fix_config.sh ../config
+      ./genkeys.py  -v
       cd ../src
-
       ... 
   }
 
@@ -254,12 +260,15 @@ We need to make changes to kernel build as follows:
 |     7. Files Required                                   |
 +---------------------------------------------------------+
 
-These are the 6 supporting files referenced above. Do not forget to make the scripts executable.
+These are the 5 supporting files referenced above. Do not forget to make the scripts executable.
 
-  - certs-local/fix_config.sh
   - certs-local/x509.oot.genkey
-  - certs-local/genkeys.sh
+  - certs-local/genkeys.py
   - certs-local/sign_manual.sh
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
+
+  Older bash versions
+  - certs-local/genkeys.sh
+  - certs-local/fix_config.sh
 
