@@ -51,7 +51,7 @@ def initialize() :
     refresh = '7d'
     kconfig = '../config'
 
-    ap.add_argument('-r',  '--refresh', help='key refresh period (' + refresh + ') Example "7days" or "24h"')
+    ap.add_argument('-r',  '--refresh', help='key refresh period (' + refresh + ') Example "7days",  "24h" or "always"')
     ap.add_argument('-c',  '--config',  help='Kernel Config file (' + kconfig + ') - updated with new key')
     ap.add_argument('-v',  '--verb', action='store_true', help='Verbose')
 
@@ -268,6 +268,8 @@ def check_refresh(conf):
     refresh = conf.get('refresh')
     if not refresh:
         return ok
+    if refresh.lower() == 'always':
+        return ok
 
     # get the refresh time
     parse = re.findall('(\d+)(\w+)', refresh)[0]
@@ -278,29 +280,30 @@ def check_refresh(conf):
             units = parse[1]
         else:
             print ('Refresh error = missing units')
-            ok = False
+            return ok
     else:
         print ('Failed to parse refresh string')
-        ok = False
+        return ok
 
     kfile = os.path.join('current', 'signing_key.pem')
-    mod_time = os.path.getmtime(kfile)
-    curr_dt = datetime.datetime.fromtimestamp(mod_time)
+    if os.path.exists(fname) :
+        mod_time = os.path.getmtime(kfile)
+        curr_dt = datetime.datetime.fromtimestamp(mod_time)
 
-    if units.startswith('s'):
-        next_dt = curr_dt + datetime.timedelta(seconds=freq)
-    elif units.startswith('m'):
-        next_dt = curr_dt + datetime.timedelta(minutes=freq)
-    elif units.startswith('h'):
-        next_dt = curr_dt + datetime.timedelta(hours=freq)
-    elif units.startswith('d'):
-        next_dt = curr_dt + datetime.timedelta(days=freq)
-    elif units.startswith('w'):
-        next_dt = curr_dt + datetime.timedelta(weeks=freq)
+        if units.startswith('s'):
+            next_dt = curr_dt + datetime.timedelta(seconds=freq)
+        elif units.startswith('m'):
+            next_dt = curr_dt + datetime.timedelta(minutes=freq)
+        elif units.startswith('h'):
+            next_dt = curr_dt + datetime.timedelta(hours=freq)
+        elif units.startswith('d'):
+            next_dt = curr_dt + datetime.timedelta(days=freq)
+        elif units.startswith('w'):
+            next_dt = curr_dt + datetime.timedelta(weeks=freq)
 
-    now = date_time_now()
-    if next_dt > now:
-        ok = False
+        now = date_time_now()
+        if next_dt > now:
+            ok = False
 
     return ok
 
@@ -308,10 +311,14 @@ def main():
 
     #pdb.set_trace()
     conf = initialize()
+    verb = conf['verb']
+
     key_refresh = check_refresh(conf)
     if key_refresh:
+        if verb:
+            print ('Refreshing keys')
         ok = make_new_keys (conf)
-    elif conf['verb']:
+    elif verb:
         print ('Not time to refresh keys')
 
     ok = update_config(conf )
