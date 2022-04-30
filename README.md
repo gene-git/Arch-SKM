@@ -23,13 +23,11 @@ This provides the tools needed to build a kernel with support for signed modules
         3. certs-local/sign_manual.sh
         4. certs-local/dkms/kernel-sign.conf
         5. certs-local/dkms/kernel-sign.sh
-        - Alternative bash versions
-        6. certs-local/genkeys.sh
-        7. certs-local/fix_config.sh
 
 ### See:
-    - [Arch Wiki on signed kernel modules] (https://wiki.archlinux.org/title/Signed_kernel_modules)
-    - [Kernel Docs on module signing] (https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
+
+    [Arch Wiki on signed kernel modules] (https://wiki.archlinux.org/title/Signed_kernel_modules)
+    [Kernel Docs on module signing] (https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
 
 # 1. Introduction                                     |
 
@@ -242,8 +240,4 @@ These are the 5 supporting files referenced above. Do not forget to make the scr
   - certs-local/sign_manual.sh
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
-
-  Older bash versions
-  - certs-local/genkeys.sh
-  - certs-local/fix_config.sh
 
