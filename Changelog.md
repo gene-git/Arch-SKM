@@ -1,3 +1,12 @@
+version [0.8.1]                                                     - 20220430
+  - Remove references to now unused scripts
+
+version [0.8.0]                                                     - 20220430
+  - Fix Issue #2 on github 
+    Per itoffshore check for key exists prior to getting mtime. Fixes bug in check_refresh(
+  - Tidy up README
+  - fix typo
+
 version [0.7.0]                                                     - 20220430
   - Add genkeys.py (replaces both genkeys.sh and fix_config.sh) 
     This supports refresh key frequency (default is 7 days) 
