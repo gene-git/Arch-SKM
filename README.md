@@ -216,12 +216,12 @@ The default key regeneration refresh period is 7 days, but this can be changed o
       msg2 "Local Signing certs for out of tree modules..."
 
       certs_local_src="../../certs-local" 
-      key_dir=$(<${certs_local_src}/current_key_dir)
-
       certs_local_dst="${builddir}/certs-local"
+
       signer="sign_manual.sh"
       mkdir -p ${certs_local_dst}
-      rsync -a $certs_local_src/{current,$key_dir,$signer} $certs_local_dst/
+      rsync -aL $certs_local_src/current $certs_local_dst/
+      rsync -a $certs_local_src/signer $certs_local_dst/
 
       # dkms tools
       dkms_src="$certs_local_src/dkms"
