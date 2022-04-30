@@ -42,12 +42,12 @@ normal kernel build.
 Out of tree modules which are not part of the kernel source distribution. They are built outside 
 of the kernel tree, requiring the kernel headers package for each kernel they are to be built for. 
 They can be built manually for a specific kernel and packaged, or they can be built whenever 
-needed using DKMS (https://wiki.archlinux.org/index.php/DKMS). 
+needed using DKMS <https://wiki.archlinux.org/index.php/DKMS>. 
 
 Examples of such packages, provided by Arch, include:
 
-  - virtualbox-guest-modules-arch (https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch) 
-  - wireguard-arch (https://www.archlinux.org/packages/?name=wireguard-arch).
+  - virtualbox-guest-modules-arch <https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch> 
+  - wireguard-arch <https://www.archlinux.org/packages/?name=wireguard-arch>.
 
 During a standard kernel compilation, the kernel build tools create a private/public key pair and 
 sign every in tree module (using the private key). The public key is saved in the kernel itself. 
@@ -62,7 +62,7 @@ compiled into kernel or turned on at run time using a kernel parameter as explai
 # 2. How to sign kernel modules using a custom kernel  
 
 The starting point is based on a custom kernel package as outlined in this article Kernel/Arch Build System. 
-(https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System)
+<https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System>
 
 We will modify the build to:
 
@@ -88,7 +88,7 @@ A kernel config parameter is now used to make kernel aware of additional signing
 
 Keys and signing tools will be stored in current module build directory. Nothing needs to be done to 
 clean this as removal is handled by the standard module cleanup. Certs are thus 
-installed in /usr/lib/modules/<kernel-vers>-<build>/certs-local
+installed in /usr/lib/modules/<kernel-vers>-<build>/certs-local.  It is preferable to use elliptic curve type keys and zstd compression. 
 
 #     4. Kernel configuration  
 
@@ -122,7 +122,7 @@ the updated '.config' file back to the build file 'config'.
             Type of module signing key to be generated -> ECDSA
 
   - CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
-    Enable Loadable module suppot --->
+    Enable Loadable module support --->
         Allow loading of modules with missing namespace imports -> set off 
 
 ## 4.1 Kernel command line 
@@ -148,8 +148,8 @@ the updated '.config' file back to the build file 'config'.
     genkeys.py
     sign_manual.sh
 
-  The files genkeys.py and its config x509.oot.genkey are used to create key pairs.
-  It also provides the kernel with the key to sign the out of tree modules,  by updating the config file 
+  The files genkey.py and its config x509.oot.genkey are used to create key pairs.
+  It also provides the kernel with the key to sign the out of tree modules by updating the config file 
   used to build the kernel.
 
   The script sign_manual is used to sign out of tree kernel modules by hand.
@@ -201,6 +201,8 @@ We need to make changes to kernel build as follows:
       cd ../src
       ... 
   }
+
+The default key regeneration refresh period is 7 days, but this can be changed on the command line. So if you want to create new keys monthly, then add "--refresh 30days" as an argument to genekeys.py. You can refresh on every build by using "--refresh always". Refresh units can be seconds,minutes,hours,days or weeks. 
 
 ## 6.2 _package-headers() 
 
