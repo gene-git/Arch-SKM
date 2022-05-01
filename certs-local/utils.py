@@ -8,9 +8,9 @@ import os
 import sys
 import subprocess
 import datetime
+import glob
 
 #------------------------------------------------------------------------
-#
 # Runs external program (no shell)
 #
 def run_prog (pargs):
@@ -27,10 +27,17 @@ def run_prog (pargs):
     return [rc, output, errors]
 
 #------------------------------------------------------------------------
-#
 # Current date time
 #
 def date_time_now() :
     today = datetime.datetime.today()
     return today
 
+#------------------------------------------------------------------------
+# shell glob a file list
+#
+def file_list_glob(pathname) :
+
+    flist = glob.glob(pathname, recursive=False)
+    
+    return flist

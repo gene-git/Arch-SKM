@@ -41,6 +41,7 @@ def _parse_args(av):
     else:
         os.makedirs(dst_dir, exist_ok=True)
         src_dir = os.path.dirname(av[0])
+        src_dir = os.path.abspath(src_dir)
 
     return src_dir, dst_dir
 
@@ -63,14 +64,18 @@ def main():
     if not dst_dir:
         return
 
-    current = os.path.join(src_dir, 'current') 
-    cmd = '/usr/bin/rsync -aL ' + current + ' ' + dst_dir
+    cur_path = os.path.join(src_dir, 'current') 
+    key_dir = os.readlink(cur_path)
+    key_dir = os.path.join(src_dir, key_dir)
+    key_dir = os.path.abspath(key_dir)
+
+    cmd = '/usr/bin/rsync -a ' + cur_path + ' ' + key_dir + ' ' + dst_dir
     ok = _run_prog_verb(cmd)
     if not ok:
         return
 
     signer = os.path.join(src_dir, 'sign_manual.sh')
-    cmd = '/usr/bin/rsync -a ' + signer + ' ' + dst_dir
+    cmd = '/usr/bin/rsync -aL ' + signer + ' ' + dst_dir
     ok = _run_prog_verb(cmd)
     if not ok:
         return
