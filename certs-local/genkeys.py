@@ -15,30 +15,13 @@
 import os
 import sys
 import stat
-import subprocess
 import datetime
 import argparse
 import uuid
 import re
 
+import tools
 import pdb
-
-#------------------------------------------------------------------------
-#
-# Runs external program (no shell)
-#
-def run_prog (pargs):
-
-    ret = subprocess.run(pargs, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    rc = ret.returncode
-    output = None
-    errors = None
-    if ret.stdout :
-        output = str(ret.stdout, 'utf-8',errors='ignore')
-    if ret.stderr :
-        errors = str(ret.stderr, 'utf-8',errors='ignore')
-
-    return [rc, output, errors]
 
 #
 # Command line options
@@ -174,14 +157,6 @@ def update_config(conf):
 
 #------------------------------------------------------------------------
 #
-# Current date time
-#
-def date_time_now() :
-    today = datetime.datetime.today()
-    return today
-
-#------------------------------------------------------------------------
-#
 # Make the actual keys - rsa or ec using openssl
 #
 def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
@@ -194,7 +169,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
         cmd = cmd + ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
 
     pargs = cmd.split()
-    [rc, stdout, stderr] = run_prog(pargs)
+    [rc, stdout, stderr] = tools.run_prog(pargs)
 
     if rc != 0:
         print('Error making new key')
@@ -205,7 +180,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl pkey -in ' + kkey + ' -out ' +  kprv
     pargs = cmd.split()
-    [rc, stdout, stderr] = run_prog(pargs)
+    [rc, stdout, stderr] = tools.run_prog(pargs)
     if rc != 0:
         print('Error making prv key')
         if verb and stderr:
@@ -214,7 +189,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl x509 -outform der -in ' + kkey + ' -out '  + kcrt
     pargs = cmd.split()
-    [rc, stdout, stderr] = run_prog(pargs)
+    [rc, stdout, stderr] = tools.run_prog(pargs)
     if rc != 0:
         print('Error making crt')
         if verb and stderr:
@@ -232,7 +207,7 @@ def make_new_keys (conf):
 
     khash = conf['khash'] 
     ktype = conf['ktype'] 
-    now = date_time_now()
+    now = tools.date_time_now()
     now_str = now.strftime('%Y%m%d-%H%M')
 
     kdir = os.path.join('./', now_str)
@@ -301,7 +276,7 @@ def check_refresh(conf):
         elif units.startswith('w'):
             next_dt = curr_dt + datetime.timedelta(weeks=freq)
 
-        now = date_time_now()
+        now = tools.date_time_now()
         if next_dt > now:
             ok = False
 
