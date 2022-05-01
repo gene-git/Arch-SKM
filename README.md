@@ -18,11 +18,12 @@ This provides the tools needed to build a kernel with support for signed modules
         1. prepare()
         2. _package-headers()
     7. Files Required
-        1. certs-local/x509.oot.genkey
-        2. certs-local/genkeys.py
-        3. certs-local/sign_manual.sh
-        4. certs-local/dkms/kernel-sign.conf
-        5. certs-local/dkms/kernel-sign.sh
+        1. certs-local/genkeys.py
+        2. certs-local/x509.oot.genkey
+        3. certs-local/install-certs.py
+        4. certs-local/sign_manual.sh
+        5. certs-local/dkms/kernel-sign.conf
+        6. certs-local/dkms/kernel-sign.sh
 
 ### See:
 
@@ -139,10 +140,11 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
 
   This directory will provide the tools to create the keys, as well as signing kernel modules.
 
-  Put the 3 files into certs-local:
+  Put these files into certs-local:
 
-    x509.oot.genkey
     genkeys.py
+    x509.oot.genkey
+    install-certs.py
     sign_manual.sh
 
   The files genkey.py and its config x509.oot.genkey are used to create key pairs.
@@ -157,6 +159,11 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
   It also creates synlink 'current' which pointd to the newly created directory with the 'current' key pairs.
   The key directory is named by date and time.
 
+  genkeys will check and update kernel configs with the --config config(s) where it takes either a single
+  config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. All configs
+  will be updated with the same key. The default ketype is ec (elliptic curve) and the default
+  hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
+  
   These files are all provided.
 
   ## 5.2 dkms support
@@ -193,9 +200,7 @@ We need to make changes to kernel build as follows:
   prepare() {
 
       msg2 "Rebuilding local signing key..."
-      cd ../certs-local
-      ./genkeys.py  -v
-      cd ../src
+      ./genkeys.py  -v --config config
       ... 
   }
 
@@ -217,6 +222,7 @@ The default key regeneration refresh period is 7 days, but this can be changed o
       
       certs_local_src="../../certs-local" 
       certs_local_dst="${builddir}/certs-local"
+
       ${certs_local_src}/install-certs.py $certs_local_dst
 
       # install dkms tools if needed
@@ -229,10 +235,11 @@ The default key regeneration refresh period is 7 days, but this can be changed o
 
 # 7. Files Required 
 
-These are the 5 supporting files referenced above. Do not forget to make the scripts executable.
+These are the supporting files referenced above. Do not forget to make the scripts executable.
 
-  - certs-local/x509.oot.genkey
   - certs-local/genkeys.py
+  - certs-local/install-certs.py
+  - certs-local/x509.oot.genkey
   - certs-local/sign_manual.sh
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
