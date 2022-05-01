@@ -202,7 +202,10 @@ We need to make changes to kernel build as follows:
   prepare() {
 
       msg2 "Rebuilding local signing key..."
-      ./genkeys.py  -v --config config
+      # adjust cerdir as needed 
+      certdir='../certs-local'
+      $certdir/genkeys.py -v --config ../config
+
       ... 
   }
 
