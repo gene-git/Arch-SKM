@@ -151,18 +151,20 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
   It also provides the kernel with the key to sign the out of tree modules by updating the config file 
   used to build the kernel.
 
-  The script sign_manual is used to sign out of tree kernel modules by hand.
+  The sign_manual script is used to sign out of tree kernel modules by hand.
 
   genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
-  the keys every 7 days but this can be changed.
+  the keys every 7 days but this can be changed with command line option.
 
-  It also creates synlink 'current' which pointd to the newly created directory with the 'current' key pairs.
-  The key directory is named by date and time.
+  It also creates a soft link named 'current' which points to the newly created directory with the 'current' keys.
+  The actual key directory is named by date and time.
 
-  genkeys will check and update kernel configs with the --config config(s) where it takes either a single
+  genkeys will check and update kernel configs given by the  --config config(s) option. This takes either a single
   config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. All configs
-  will be updated with the same key. The default ketype is ec (elliptic curve) and the default
+  will be updated with the same key. The default keytype is ec (elliptic curve) and the default
   hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
+
+  install-certs.py is to be called from the package_headers() function of PKGBUILD to install the signing keys. Example is given below. 
   
   These files are all provided.
 
