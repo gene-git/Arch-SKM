@@ -390,7 +390,7 @@ def check_refresh(conf):
 
 def main():
 
-    pdb.set_trace()
+    #pdb.set_trace()
     conf = initialize()
     if not conf:
         return
