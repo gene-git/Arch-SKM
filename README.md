@@ -214,16 +214,12 @@ The default key regeneration refresh period is 7 days, but this can be changed o
       # This is run in the kernel source / build directory
       #
       msg2 "Local Signing certs for out of tree modules..."
-
+      
       certs_local_src="../../certs-local" 
       certs_local_dst="${builddir}/certs-local"
+      ${certs_local_src}/install-certs.py $certs_local_dst
 
-      signer="sign_manual.sh"
-      mkdir -p ${certs_local_dst}
-      rsync -aL $certs_local_src/current $certs_local_dst/
-      rsync -a $certs_local_src/signer $certs_local_dst/
-
-      # dkms tools
+      # install dkms tools if needed
       dkms_src="$certs_local_src/dkms"
       dkms_dst="${pkgdir}/etc/dkms"
       mkdir -p $dkms_dst
