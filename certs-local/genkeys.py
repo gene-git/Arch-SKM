@@ -20,7 +20,7 @@ import argparse
 import uuid
 import re
 
-import tools
+import utils
 import pdb
 
 #
@@ -169,7 +169,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
         cmd = cmd + ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
 
     pargs = cmd.split()
-    [rc, stdout, stderr] = tools.run_prog(pargs)
+    [rc, stdout, stderr] = utils.run_prog(pargs)
 
     if rc != 0:
         print('Error making new key')
@@ -180,7 +180,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl pkey -in ' + kkey + ' -out ' +  kprv
     pargs = cmd.split()
-    [rc, stdout, stderr] = tools.run_prog(pargs)
+    [rc, stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         print('Error making prv key')
         if verb and stderr:
@@ -189,7 +189,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl x509 -outform der -in ' + kkey + ' -out '  + kcrt
     pargs = cmd.split()
-    [rc, stdout, stderr] = tools.run_prog(pargs)
+    [rc, stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         print('Error making crt')
         if verb and stderr:
@@ -207,7 +207,7 @@ def make_new_keys (conf):
 
     khash = conf['khash'] 
     ktype = conf['ktype'] 
-    now = tools.date_time_now()
+    now = utils.date_time_now()
     now_str = now.strftime('%Y%m%d-%H%M')
 
     kdir = os.path.join('./', now_str)
@@ -276,7 +276,7 @@ def check_refresh(conf):
         elif units.startswith('w'):
             next_dt = curr_dt + datetime.timedelta(weeks=freq)
 
-        now = tools.date_time_now()
+        now = utils.date_time_now()
         if next_dt > now:
             ok = False
 

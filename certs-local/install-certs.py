@@ -18,7 +18,7 @@
 import os
 import sys
 
-import tools 
+import utils 
 
 #
 # Extract self dir and dest dir
@@ -48,7 +48,7 @@ def _run_prog_verb(cmd):
 
     ok = True
     pargs = cmd.split()
-    [rc, stdout, stderr] = tools.run_prog(pargs)
+    [rc, stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         ok = False
         print ('Error  with : ' + cmd)
