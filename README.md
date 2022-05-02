@@ -258,9 +258,9 @@ These are the supporting files referenced above. Do not forget to make the scrip
 
 arch-sign-modules reduces the manual steps for building a fully signed custom kernel to 3 commands to *Update* / *Build* & *Install* the kernel:
 
-abk -u kernel-name
-abk -b kernel-name
-abk -i kernel-name
+    abk -u kernel-name
+    abk -b kernel-name
+    abk -i kernel-name
 
  - [README.scripts.md](https://github.com/itoffshore/Arch-SKM/blob/master/README.scripts.md)
  - [PKGBUILD example](https://github.com/itoffshore/Arch-SKM/blob/master/Arch-Linux-PKGBUILD-example)
