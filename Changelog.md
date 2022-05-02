@@ -1,7 +1,8 @@
 
-### version [x.x.x] 20220502
+### version [1.3.3] 20220502
 
  - Add reference to @itoffshore aur package and github repo
+ - Typo in echo found by @itoffshore
 
 ### version [1.3.2] 20220502
 
