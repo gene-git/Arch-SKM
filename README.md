@@ -24,11 +24,12 @@ This provides the tools needed to build a kernel with support for signed modules
         4. certs-local/sign_manual.sh
         5. certs-local/dkms/kernel-sign.conf
         6. certs-local/dkms/kernel-sign.sh
+    8.  Arch AUR package
 
 ### See:
 
-    [Arch Wiki on signed kernel modules] (https://wiki.archlinux.org/title/Signed_kernel_modules)
-    [Kernel Docs on module signing] (https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
+ - [Arch Wiki on signed kernel modules](https://wiki.archlinux.org/title/Signed_kernel_modules)
+ - [Kernel Docs on module signing](https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
 
 # 1. Introduction                                     |
 
@@ -250,3 +251,7 @@ These are the supporting files referenced above. Do not forget to make the scrip
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
 
+
+# 8. Arch AUR packags
+
+ - There is alos a package in AUR [Arch Sign Modules](https://aur.archlinux.org/packages/arch-sign-modules) and its github repo [Arch-SKM](https://github.com/itoffshore/Arch-SKM)
