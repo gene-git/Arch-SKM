@@ -51,7 +51,7 @@ if [ -f $SIGN ] ;then
        done
    fi
    if [ "$listgz" != "" ]  ; then
-       for mod in $listxz
+       for mod in $listgz
        do
            echo "DKMS: Signing kernel ($kernelver) module: $mod"
            modunc=${mod%.gz}
