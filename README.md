@@ -160,8 +160,10 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
   The actual key directory is named by date and time.
 
   genkeys will check and update kernel configs given by the  --config config(s) option. This takes either a single
-  config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. All configs
-  will be updated with the same key. The default keytype is ec (elliptic curve) and the default
+  config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. Remember to quote any wildcard 
+  characters to prevent the shell from expanding them. 
+ 
+  All configs will be updated with the same key. The default keytype is ec (elliptic curve) and the default
   hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
 
   install-certs.py is to be called from the package_headers() function of PKGBUILD to install the signing keys. Example is given below. 
