@@ -1,4 +1,9 @@
 
+### version [1.3.5] 20220502
+
+ - Typo in README
+ - Add some more info about tools availabe by @itoffshore leveraging Arch-SKM.
+
 ### version [1.3.4] 20220502
 
  - Apply whitespace patches from @itoffshore

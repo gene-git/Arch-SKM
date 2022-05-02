@@ -254,7 +254,7 @@ These are the supporting files referenced above. Do not forget to make the scrip
 
 # 8. Arch AUR packags
 
- - There is also a package available in the AUR [Arch Sign Modules](https://aur.archlinux.org/packages/arch-sign-modules) and its companion github repo [Arch-SKM](https://github.com/itoffshore/Arch-SKM) based on this repo. 
+ - There is also a package available in the AUR [Arch Sign Modules](https://aur.archlinux.org/packages/arch-sign-modules) and its companion github repo [Arch-SKM](https://github.com/itoffshore/Arch-SKM) leveraging Arch-SKM. 
 
 arch-sign-modules reduces the manual steps for building a fully signed custom kernel to 3 commands to *Update* / *Build* & *Install* the kernel:
 
