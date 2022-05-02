@@ -1,4 +1,8 @@
 
+### version [2.0.0] 20220502
+
+ - Significant recent changes warrant a major version bump.
+
 ### version [1.3.5] 20220502
 
  - Typo in README
