@@ -45,7 +45,6 @@ echo "Module signing key : $KEY"
 function is_signed () {
      f=$1
      has_sig='n'
-     #hexdump -C $f |tail  |grep 'Module sign' > /dev/null
      hexdump --e '"%_p"' $f |tail  |grep 'Module sign' > /dev/null
      rc=$?
      if [ $rc = 0 ] ; then
@@ -82,20 +81,25 @@ do
 
     ext=${mod##*.}
     isxz='n'
-    iszstd='n'
-
     if [ "$ext" = "xz" ] ; then
         echo "Decompressing :"
         isxz='y'
         xz -f --decompress $mod_tmp
         mod_tmp=${mod_tmp%*.xz}
     fi
-
-    if [ "$ext" = "zstd" ] ; then
+    iszst='n'
+    if [ "$ext" = "zst" ] ; then
         echo "Decompressing :"
-        iszstd='y'
-        zstd -f --decompress $mod_tmp
-        mod_tmp=${mod_tmp%*.zstd}
+        iszst='y'
+        zstd -fq --decompress $mod_tmp
+        mod_tmp=${mod_tmp%*.zst}
+    fi
+    isgz='n'
+    if [ "$ext" = "gz" ] ; then
+        echo "Decompressing gz:"
+        isgz='y'
+        gzip -d $mod_tmp
+        mod_tmp=${mod_tmp%*.gz}
     fi
 
     #
@@ -115,13 +119,16 @@ do
         xz -f $mod_tmp
         mod_tmp=${mod_tmp}.xz
     fi
-
-    if [ "$iszstd" = "y" ] ; then
+    if [ "$iszst" = "y" ] ; then
         echo "Compressing:"
         zstd -f $mod_tmp
-        mod_tmp=${mod_tmp}.zstd
+        mod_tmp=${mod_tmp}.zst
     fi
-
+    if [ "$isgz" = "y" ] ; then
+        echo "Compressing:"
+        gzip -f $mod_tmp
+        mod_tmp=${mod_tmp}.gz
+    fi
 
     #
     # backup current and install newly signed module
