@@ -1,4 +1,8 @@
 
+### version [1.3.4] 20220502
+
+ - Apply whitespace patches from @itoffshore
+
 ### version [1.3.3] 20220502
 
  - Add reference to @itoffshore aur package and github repo
