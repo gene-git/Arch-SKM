@@ -2,13 +2,12 @@
 #
 # Installed in /etc/dkms/kernel-sign.sh
 #
-#  This is called via POST_BUILD for each module 
-#  We use this to sign in the dkms build directory.  
+#  This is called via POST_BUILD for each module
+#  We use this to sign in the dkms build directory.
 #
 
 cd ../$kernelver/$arch/module/
 
-#SIGN=$kernel_source_dir/certs-local/sign_manual.sh
 SIGN=/usr/lib/modules/$kernelver/build/certs-local/sign_manual.sh
 
 if [ -f $SIGN ] ;then
@@ -38,6 +37,7 @@ if [ -f $SIGN ] ;then
            rm -f $modunc
        done
    fi
+
    if [ "$listxz" != "" ]  ; then
        for mod in $listxz
        do
@@ -46,10 +46,11 @@ if [ -f $SIGN ] ;then
            xz -d $mod
            $SIGN "$modunc"
            echo "    : compress xz ($kernelver) module: $modunc"
-           xz $modunc
+           xz -f $modunc
            rm -f $modunc
        done
    fi
+
    if [ "$listgz" != "" ]  ; then
        for mod in $listgz
        do
@@ -63,9 +64,8 @@ if [ -f $SIGN ] ;then
        done
    fi
 
+
 else
    echo "kernel $kernelver doesn't have out of tree module signing tools"
    echo "skipping signing out of tree modules"
 fi
-
-
