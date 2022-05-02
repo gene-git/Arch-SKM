@@ -1,3 +1,27 @@
+
+### version [1.3.0] 20220501
+
+ - Fixes from @itoffshore
+    1. For manual signing
+       zstd modules use .zst instead of .zstd
+       Add support for gzip
+    2. For dkms
+       Add gzip support
+ - Update README with comment about quoting wildcard characters
+
+### version [1.2.0] 20220501
+
+ - Expand help with reminder wildcards must be quoted
+
+### version [1.1.0] 20220501
+
+ - Tweak the prepare() exampl
+ - Word smithing
+
+### version [1.0.1] 20220501
+
+ - Turn off debug
+
 ### version [1.0.0] 20220501
 
  - Provide install-certs.py to simplfy PKGBUILD
