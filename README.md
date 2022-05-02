@@ -184,12 +184,12 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
   As explained, below - once this is installed - all that is needed to have dkms automatically 
   sign modules is to make a soft link:
 
-  $ cd /etc/dkms
-  # ln -s kernel-sign.conf <module-name>.conf
+    $ cd /etc/dkms
+    ln -s kernel-sign.conf <module-name>.conf
 
   For example:
 
-  # ln -s kernel-sign.conf vboxdrv.conf
+    ln -s kernel-sign.conf vboxdrv.conf
 
   The link creation can easily be added to an arch package to simplify further if desired.
 
@@ -201,15 +201,14 @@ We need to make changes to kernel build as follows:
 
   Add the following to the top of the prepare() function:
 
-  prepare() {
+    prepare() {
 
-      msg2 "Rebuilding local signing key..."
-      # adjust cerdir as needed 
-      certdir='../certs-local'
-      $certdir/genkeys.py -v --config ../config
-
+        msg2 "Rebuilding local signing key..."
+        # adjust cerdir as needed 
+        certdir='../certs-local'
+        $certdir/genkeys.py -v --config ../config
       ... 
-  }
+    }
 
 The default key regeneration refresh period is 7 days, but this can be changed on the command line. So if you want to create new keys monthly, then add "--refresh 30days" as an argument to genekeys.py. You can refresh on every build by using "--refresh always". Refresh units can be seconds,minutes,hours,days or weeks. 
 
@@ -217,28 +216,28 @@ The default key regeneration refresh period is 7 days, but this can be changed o
 
   Add the following to the bottom of the _package-headers() function:
 
-  _package-headers() {
+    _package-headers() {
 
-      ...
+    ...
 
-      #
-      # Out of Tree Module signing
-      # This is run in the kernel source / build directory
-      #
-      msg2 "Local Signing certs for out of tree modules..."
+    #
+    # Out of Tree Module signing
+    # This is run in the kernel source / build directory
+    #
+    msg2 "Local Signing certs for out of tree modules..."
       
-      certs_local_src="../../certs-local" 
-      certs_local_dst="${builddir}/certs-local"
+    certs_local_src="../../certs-local" 
+    certs_local_dst="${builddir}/certs-local"
 
-      ${certs_local_src}/install-certs.py $certs_local_dst
+    ${certs_local_src}/install-certs.py $certs_local_dst
 
-      # install dkms tools if needed
-      dkms_src="$certs_local_src/dkms"
-      dkms_dst="${pkgdir}/etc/dkms"
-      mkdir -p $dkms_dst
+    # install dkms tools if needed
+    dkms_src="$certs_local_src/dkms"
+    dkms_dst="${pkgdir}/etc/dkms"
+    mkdir -p $dkms_dst
 
-      rsync -a $dkms_src/{kernel-sign.conf,kernel-sign.sh} $dkms_dst/
-  }
+    rsync -a $dkms_src/{kernel-sign.conf,kernel-sign.sh} $dkms_dst/
+    }
 
 # 7. Files Required 
 
