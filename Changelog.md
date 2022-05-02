@@ -23,7 +23,7 @@
 
 ### version [1.1.0] 20220501
 
- - Tweak the prepare() exampl
+ - Tweak the prepare() example
  - Word smithing
 
 ### version [1.0.1] 20220501
