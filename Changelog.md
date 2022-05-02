@@ -1,7 +1,11 @@
 
-### version [x.x.x] 2022050x
+### version [x.x.x] 20220502
 
- - Work in progress
+ - Add reference to @itoffshore aur package and github repo
+
+### version [1.3.2] 20220502
+
+ - Fix hexdump typo "--e" to "-e"
 
 ### version [1.3.1] 20220502
 
