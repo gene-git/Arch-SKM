@@ -57,7 +57,7 @@ if [ -f $SIGN ] ;then
            modunc=${mod%.gz}
            gzip -d $mod
            $SIGN "$modunc"
-           echo "    : compress xz ($kernelver) module: $modunc"
+           echo "    : compress gzip ($kernelver) module: $modunc"
            gzip -f $modunc
            rm -f $modunc
        done
