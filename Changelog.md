@@ -1,4 +1,10 @@
 
+### version [2.1.0] 20220503
+
+ - The key type and hash are now saved in files along side the keys. 
+   This allows the signing script to read them, and means it no longer has hardcoded hash.  
+   The sign script falls back on sha512 in case (older) key directory has no saved hash file
+
 ### version [2.0.0] 20220502
 
  - Significant recent changes warrant a major version bump.
