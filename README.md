@@ -42,11 +42,11 @@ normal kernel build.
 Out of tree modules which are not part of the kernel source distribution. They are built outside 
 of the kernel tree, requiring the kernel headers package for each kernel they are to be built for. 
 They can be built manually for a specific kernel and packaged, or they can be built whenever 
-needed using DKMS <https://wiki.archlinux.org/index.php/DKMS>. 
+needed using [DKMS](https://wiki.archlinux.org/index.php/DKMS). 
 
 Examples of such packages, provided by Arch, include:
 
-  - virtualbox-guest-modules-arch <https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch> 
+  - [virtualbox-guest-modules-arch](https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch) 
 
 During a standard kernel compilation, the kernel build tools create a private/public key pair and 
 sign every in tree module (using the private key). The public key is saved in the kernel itself. 
@@ -56,12 +56,12 @@ is unchanged.
 The kernel can be enabled to always verify modules and report any failures to standard logs. 
 The choice to permit the loading and use of a module which could not be verified can be either 
 compiled into kernel or turned on at run time using a kernel parameter as explained below.
-(https://wiki.archlinux.org/index.php/Kernel_parameter)
+[Arch Wiki Kernel Parameters](https://wiki.archlinux.org/index.php/Kernel_parameter)
 
 # 2. How to sign kernel modules using a custom kernel  
 
-The starting point is based on a custom kernel package as outlined in this article Kernel/Arch Build System. 
-<https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System>
+The starting point is based on a custom kernel package as outlined in this article 
+[Kernel/Arch Build System](https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System)
 
 We will modify the build to:
 
