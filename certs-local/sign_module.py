@@ -112,7 +112,7 @@ def get_key_info(me):
             khash = khash.strip()
             fp.close()
         else:
-            khash = None
+            khash = 'sha512'
     else:
         khash = 'sha512'
 
