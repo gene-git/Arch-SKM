@@ -394,7 +394,7 @@ def main():
     #
     # Sign all modules
     #
-    signer = get_kernel_signer(fake_me)
+    signer = get_kernel_signer(me)      # fake me for testing outside kernel tree
     key_info = get_key_info(me)
     if not key_info['ok']:
         return
