@@ -1,3 +1,11 @@
+### version [2.2.0] WIP
+
+ - Improve module signing scripts.
+ - sign_module.py replaces sign_manual.sh
+ - dkms/kernel_sign.sh updated accordingly
+ - install-certs updated accordingly
+ - adds dependency : python-zstandard for handling zst compressed modules
+
 ### version [2.1.1] 20220503
 
  - Bah, typo
