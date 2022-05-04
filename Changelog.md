@@ -1,4 +1,8 @@
 
+### version [2.2.1] 20220504
+
+ - Update README to reflect new python sign_module.py
+
 ### version [2.2.0] 20220504
 
  - Improve module signing scripts.

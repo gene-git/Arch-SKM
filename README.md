@@ -146,13 +146,15 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
     genkeys.py
     x509.oot.genkey
     install-certs.py
-    sign_manual.sh
+    sign_module.py
 
-  The files genkey.py and its config x509.oot.genkey are used to create key pairs.
+  The files genkey.py and its companion configuration file x509.oot.genkey are used to create key pairs.
   It also provides the kernel with the key to sign the out of tree modules by updating the config file 
   used to build the kernel.
 
-  The sign_manual script is used to sign out of tree kernel modules by hand.
+  sign_module.py signs out of tree kernel modules. It can be run manually and is invoked 
+by dkms/kernel-sign.sh. It handles modules compressed with xz and gzip and depends on 
+python-zstandard package to help handle those compressed with zstd. 
 
   genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
   the keys every 7 days but this can be changed with command line option.
@@ -247,7 +249,7 @@ These are the supporting files referenced above. Do not forget to make the scrip
   - certs-local/genkeys.py
   - certs-local/install-certs.py
   - certs-local/x509.oot.genkey
-  - certs-local/sign_manual.sh
+  - certs-local/sign_module.py
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
 
