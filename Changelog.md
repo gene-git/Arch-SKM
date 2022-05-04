@@ -1,4 +1,5 @@
-### version [2.2.0] WIP
+
+### version [2.2.0] TBD
 
  - Improve module signing scripts.
  - sign_module.py replaces sign_manual.sh
