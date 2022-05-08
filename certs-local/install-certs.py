@@ -71,10 +71,10 @@ def main():
 
     signer = os.path.join(src_dir, 'sign_module.py')
     signer_class = os.path.join(src_dir, 'signer_class.py')
-    utils = os.path.join(src_dir, 'utils.py')
+    futils = os.path.join(src_dir, 'utils.py')
 
     # list of things to copy to dst_dir
-    flist = [cur_path, key_dir, signer, signer_class, utils]
+    flist = [cur_path, key_dir, signer, signer_class, futils]
     pargs = ['/usr/bin/rsync', '-a'] + flist + [dst_dir]
 
     ok = _run_prog_verb(pargs)
