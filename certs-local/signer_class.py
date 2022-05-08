@@ -1,19 +1,19 @@
 #!/usr/bin/python
-# 
+"""
 # -------------------------
-#   class KernelModSigner 
-#       Handles signing, keys etc.
+#   class KernelModSigner
+#       Handles signing, keys etc
 # -------------------------
 #   class ModuleTool
-#       uses KernelModSigner 
-#       For one module: read/write/compress/decompress and sign 
+#       uses KernelModSigner
+#       For one module: read/write/compress/decompress and sign
 # -------------------------
 #
 # Handle the actual signing of one kernel module
 #
 #  Modules can be uncompressed (.ko) or compressed with zstd (.zst), xz (.xz) or gzip (.gz)
 #  Modules may also be already signed in which case the signature is stripped out before re-signing.
-#  
+#
 #  NB - stripping removes all debug info including signature.
 #
 #  Notes:
@@ -34,20 +34,20 @@
 # We use file extension to determine if/how compressed. We do not use magic bytes
 # We work in memory rather than via filesystem - each module is small emough its not a problem
 #
-# While it may be fine to leave existing sig and sign the (previously) signed module - we choose to 
+# While it may be fine to leave existing sig and sign the (previously) signed module - we choose to
 # strip it. Maybe simpler and cleaner not to bother - not clear if this may cause problem for
-# kernel sig check or not. So we strip it out. This also removes any debug symbols so it has a different
-# downside if the module had any.
+# kernel sig check or not. So we strip it out. This also removes any debug symbols so it has a
+# different downside if the module had any debug info.
+"""
 #
 # Gene - 2022-0508
 #
 import os
-import sys
 
-import zstandard
+import uuid
 import lzma
 import gzip
-import uuid
+import zstandard
 import utils
 
 # -------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ class KernelModSigner:
         self.khash = None
         self.initialized = None
         #
-        # extract kernel directory from me which is the full path to calling executable 
+        # extract kernel directory from me which is the full path to calling executable
         # Provides path to kernel signer and to keys
         #
         my_path = os.path.realpath(me)
@@ -81,13 +81,13 @@ class KernelModSigner:
 
         # missing khash - temp backward compat only - remove at some point
         if os.path.exists(khash_file) :
-            fp = open(khash_file, 'r')
-            if fp:
-                khash = fp.read()
-                khash = khash.strip()
-                fp.close()
-            else:
-                khash = 'sha512'
+            with open(khash_file, 'r') as fp:
+                if fp:
+                    khash = fp.read()
+                    khash = khash.strip()
+                    fp.close()
+                else:
+                    khash = 'sha512'
         else:
             khash = 'sha512'
         self.khash = khash
@@ -101,13 +101,15 @@ class KernelModSigner:
         else:
             self.initialized = True
 
-    # 
-    # Does actual module signing Using key_info 
+    #
+    # Does actual module signing Using key_info
     #
     def sign_module(self, mod_path):
-
-        pargs = [self.signer, self.khash, self.key, self.crt, mod_path] 
-        [rc, sout, serr] = utils.run_prog(pargs)
+        """
+         Does the actual signing of a module file
+        """
+        pargs = [self.signer, self.khash, self.key, self.crt, mod_path]
+        [rc, _sout, _serr] = utils.run_prog(pargs)
         if rc != 0:
             print ('Signing failed')
         return rc
@@ -117,13 +119,21 @@ class KernelModSigner:
 #
 # Methods to compress / decompress, check for existing signature, remove existing signature
 # Uses KernelModSigner class for key managemen and signing.
-# 
+#
 # When checking for sig we minimize the search by looking in last few bytes - say last x bytes
-#                 <- x -> 
+#                 <- x ->
 #   [0]------[N-x]-------[N-1]
-# 
+#
 #  => N-x > x
 #
+def strip_sig(mod_path):
+    """
+     Strips out signature from module file
+    """
+    pargs =  ['/usr/bin/strip', '--strip-debug', mod_path]
+    [rc, _output, _errors] = utils.run_prog(pargs)
+    return rc
+
 class ModuleTool:
     """
      Class ModuleTool
@@ -142,7 +152,7 @@ class ModuleTool:
         self.fext = None
         self.path_ok = False
 
-        path_exists = os.path.exists(mod_path) 
+        path_exists = os.path.exists(mod_path)
         if path_exists and os.path.isfile(mod_path):
             self.mod_path = os.path.abspath(mod_path)
             self.mod_dir = os.path.dirname(self.mod_path)
@@ -154,14 +164,13 @@ class ModuleTool:
             else:
                 print ('Unkown extension : ' + self.fext)
         else:
-            print ('Bad Module file: ' + mod_path) 
+            print ('Bad Module file: ' + mod_path)
 
-    def strip_sig(self, mod_path):
-        pargs =  ['/usr/bin/strip', '--strip-debug', mod_path]
-        [rc, output, errors] = utils.run_prog(pargs)
-        return rc
 
     def is_signed(self):
+        """
+         Examone an uncompress module to determine if it is signed
+        """
         if self.signed:
             return self.signed
 
@@ -171,22 +180,25 @@ class ModuleTool:
         b0 = 0
         b1 = size-1
         if size - chunk >= chunk:
-            b0 = size - chunk 
-        found = self.data.find(sign_flag, b0, b1) 
+            b0 = size - chunk
+        found = self.data.find(sign_flag, b0, b1)
         if found >= 0:
             self.signed = True
         return self.signed
 
     def read (self):
+        """
+         Read module and decompress as needed
+        """
         if self.data:
             return self.data
-        fp = open(self.mod_path, 'rb')
-        if fp:
-            raw_data = fp.read()
-            fp.close()
-        else:
-            print('Failed to read : ' + self.mod_path)
-            return None
+        with open(self.mod_path, 'rb') as fp:
+            if fp:
+                raw_data = fp.read()
+                fp.close()
+            else:
+                print('Failed to read : ' + self.mod_path)
+                return None
 
         # decompress if needed - allowed extensions pre-validated in init()
         match self.fext:
@@ -207,7 +219,7 @@ class ModuleTool:
 
     def sign(self):
         """
-         sign temp file, compress if needed  and rename to orig. 
+         sign temp file, compress if needed  and rename to orig.
         """
         ok = True
         data = self.read()
@@ -215,22 +227,22 @@ class ModuleTool:
             return not ok
 
         ftmp = str(uuid.uuid4())
-        ptmp = os.path.join(self.mod_dir, ftmp) 
-        fp = open(ptmp, 'wb')
-        if fp:
-            fp.write(data)
-            fp.close()
-        else:
-            print('Failed to create temp mod file')
-            return not ok
+        ptmp = os.path.join(self.mod_dir, ftmp)
+        with open(ptmp, 'wb') as fp:
+            if fp:
+                fp.write(data)
+                fp.close()
+            else:
+                print('Failed to create temp mod file')
+                return not ok
 
         if self.is_signed():
-            ret = self.strip_sig(ptmp)
+            ret = strip_sig(ptmp)
             if ret != 0:
                 print ('Failed to strip temp file')
                 utils.remove_file(ptmp)
                 return not ok
-        
+
         ret = self.signer.sign_module(ptmp)
         if ret != 0:
             utils.remove_file(ptmp)
@@ -259,4 +271,3 @@ class ModuleTool:
                 return not ok
         os.rename (ptmp, self.mod_path)
         return ok
-
