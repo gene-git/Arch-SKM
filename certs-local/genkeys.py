@@ -380,6 +380,7 @@ def check_refresh(conf):
     """
     ok = True
     refresh = conf.get('refresh')
+    cert_dir = conf.get('cert_dir')
 
     if not refresh:
         return ok
@@ -400,7 +401,7 @@ def check_refresh(conf):
         print ('Failed to parse refresh string')
         return ok
 
-    kfile = os.path.join('current', 'signing_key.pem')
+    kfile = os.path.join(cert_dir, 'current', 'signing_key.pem')
     if os.path.exists(kfile) :
         mod_time = os.path.getmtime(kfile)
         curr_dt = datetime.datetime.fromtimestamp(mod_time)
