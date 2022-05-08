@@ -81,13 +81,12 @@ class KernelModSigner:
 
         # missing khash - temp backward compat only - remove at some point
         if os.path.exists(khash_file) :
-            with open(khash_file, 'r') as fp:
-                if fp:
+            try:
+                with open(khash_file, 'r') as fp:
                     khash = fp.read()
                     khash = khash.strip()
-                    fp.close()
-                else:
-                    khash = 'sha512'
+            except IOError as err:
+                khash = 'sha512'
         else:
             khash = 'sha512'
         self.khash = khash
@@ -192,13 +191,12 @@ class ModuleTool:
         """
         if self.data:
             return self.data
-        with open(self.mod_path, 'rb') as fp:
-            if fp:
+        try:
+            with open(self.mod_path, 'rb') as fp:
                 raw_data = fp.read()
-                fp.close()
-            else:
-                print('Failed to read : ' + self.mod_path)
-                return None
+        except IOError as err:
+            print(f'Failed to read : {self.mod_path}. Err {err}')
+            return None
 
         # decompress if needed - allowed extensions pre-validated in init()
         match self.fext:
@@ -228,13 +226,12 @@ class ModuleTool:
 
         ftmp = str(uuid.uuid4())
         ptmp = os.path.join(self.mod_dir, ftmp)
-        with open(ptmp, 'wb') as fp:
-            if fp:
+        try:
+            with open(ptmp, 'wb') as fp:
                 fp.write(data)
-                fp.close()
-            else:
-                print('Failed to create temp mod file')
-                return not ok
+        except IOError as err:
+            print(f'Failed to create temp mod file: Err {err}')
+            return not ok
 
         if self.is_signed():
             ret = strip_sig(ptmp)
@@ -249,9 +246,11 @@ class ModuleTool:
             return not ok
 
         if self.compress:
-            fp =  open(ptmp, 'rb')
-            raw_data = fp.read()
-            fp.close()
+            try:
+                with open(ptmp, 'rb') as fp:
+                    raw_data = fp.read()
+            except IOError as err:
+                print(f'Failed to read temp mod file: Err {err}')
 
             match self.fext:
                 case '.zst' :
@@ -261,13 +260,13 @@ class ModuleTool:
                     mod_data = lzma.compress(raw_data)
                 case  '.gz' :
                     mod_data = gzip.compress(raw_data)
-            fp = open(ptmp, 'wb')
-            if fp:
-                fp.write(mod_data)
-                fp.close()
-            else:
-                print ('Failed to write compressed temp file: ' + ptmp)
+            try:
+                with open(ptmp, 'wb') as fp:
+                    fp.write(mod_data)
+            except IOError as err:
+                print(f'Failed to write compressed temp file {ptmp}: Err {err}')
                 utils.remove_file(ptmp)
                 return not ok
+
         os.rename (ptmp, self.mod_path)
         return ok
