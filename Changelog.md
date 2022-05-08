@@ -1,4 +1,8 @@
 
+### version [2.3.1] 20220508
+
+ - Some more code tidy up and bug fix for refresh check
+
 ### version [2.3.0] 20220508
 
  - Code re-org to be more robust and easier to read.
