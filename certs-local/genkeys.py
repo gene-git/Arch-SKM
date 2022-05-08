@@ -154,7 +154,7 @@ def check_kern_config(conf):
                     if count >= num_to_match:
                         # quit if got the config items we need to check
                         break
-        except Exception as err:
+        except IOError as err:
             print (f'Failed to open : {kconfig} - error : {err}')
             num_with_errors += 1
 
@@ -226,7 +226,7 @@ def update_one_config(conf, kconfig_path, signing_key):
     try:
         with open(kconfig_path, 'r') as fp:
             kconfig_rows = fp.readlines()
-    except Exception as err:
+    except IOError as err:
         print (f'Failed to open : {kconfig_path} - error : {err}')
 
     changed = True
@@ -251,7 +251,7 @@ def update_one_config(conf, kconfig_path, signing_key):
             with open(kconfig_path_temp, 'w') as fp:
                 for row in new_rows:
                     fp.write(row)
-        except Exception as err:
+        except IOError as err:
             print (f'Failed to write : {kconfig_path_temp} - error : {err}')
 
         os.rename(kconfig_path_temp, kconfig_path)
@@ -268,7 +268,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
     """
     verb = conf['verb']
     ok = True
-    cmd = 'openssl req -new -nodes -utf8 -' + khash + ' -days ' + kvalid 
+    cmd = 'openssl req -new -nodes -utf8 -' + khash + ' -days ' + kvalid
     cmd = cmd + ' -batch -x509 -config ' + kx509
     cmd = cmd + ' -outform PEM' + ' -out ' + kkey + ' -keyout ' + kkey
 
@@ -287,7 +287,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl pkey -in ' + kkey + ' -out ' +  kprv
     pargs = cmd.split()
-    [rc, stdout, stderr] = utils.run_prog(pargs)
+    [rc, _stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         print('Error making prv key')
         if verb and stderr:
@@ -296,7 +296,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
 
     cmd = 'openssl x509 -outform der -in ' + kkey + ' -out '  + kcrt
     pargs = cmd.split()
-    [rc, stdout, stderr] = utils.run_prog(pargs)
+    [rc, _stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         print('Error making crt')
         if verb and stderr:
@@ -346,13 +346,13 @@ def make_new_keys (conf):
     try:
         with open(khash_file,'w') as fp:
             fp.write(khash + '\n')
-    except Exception as err:
+    except IOError as err:
         print (f'Failed to write : {khash_file} - error : {err}')
 
     try:
         with open(ktype_file,'w') as fp:
             fp.write(ktype + '\n')
-    except Exception as err:
+    except IOError as err:
         print (f'Failed to open : {ktype_file} - error : {err}')
 
     # update current link to new kdir
@@ -389,14 +389,10 @@ def check_refresh(conf):
 
     # get the refresh time
     parse = re.findall(r'(\d+)(\w+)', refresh)[0]
-    if parse:
+    if parse and len(parse) > 1:
         freq = parse[0]
         freq = int(freq)
-        if len(parse) > 1:
-            units = parse[1]
-        else:
-            print ('Refresh error = missing units')
-            return ok
+        units = parse[1]
     else:
         print ('Failed to parse refresh string')
         return ok
@@ -406,26 +402,26 @@ def check_refresh(conf):
         mod_time = os.path.getmtime(kfile)
         curr_dt = datetime.datetime.fromtimestamp(mod_time)
 
-        if units.startswith('s'):
-            next_dt = curr_dt + datetime.timedelta(seconds=freq)
-        elif units.startswith('m'):
-            next_dt = curr_dt + datetime.timedelta(minutes=freq)
-        elif units.startswith('h'):
-            next_dt = curr_dt + datetime.timedelta(hours=freq)
-        elif units.startswith('d'):
-            next_dt = curr_dt + datetime.timedelta(days=freq)
-        elif units.startswith('w'):
-            next_dt = curr_dt + datetime.timedelta(weeks=freq)
+        match units[0]:
+            case 's':
+                next_dt = curr_dt + datetime.timedelta(seconds=freq)
+            case 'm':
+                next_dt = curr_dt + datetime.timedelta(minutes=freq)
+            case 'h':
+                next_dt = curr_dt + datetime.timedelta(hours=freq)
+            case 'd':
+                next_dt = curr_dt + datetime.timedelta(days=freq)
+            case 'w':
+                next_dt = curr_dt + datetime.timedelta(weeks=freq)
 
         now = utils.date_time_now()
         if next_dt > now:
             ok = False
-
     return ok
 
 def main():
     """
-    # genkeys - makes out of tree kernel module signing keys 
+    # genkeys - makes out of tree kernel module signing keys
     """
     #pdb.set_trace()
     conf = initialize()
