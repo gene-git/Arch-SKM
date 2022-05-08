@@ -85,7 +85,7 @@ class KernelModSigner:
                 with open(khash_file, 'r') as fp:
                     khash = fp.read()
                     khash = khash.strip()
-            except IOError as err:
+            except IOError as _err:
                 khash = 'sha512'
         else:
             khash = 'sha512'

@@ -117,7 +117,7 @@ def parse_args(av):
 
 def main():
     """
-     sign_module : -d <dir> or mod1 mod2 ... 
+     sign_module : -d <dir> or mod1 mod2 ...
     """
     # test / debug
     # pdb.set_trace()
