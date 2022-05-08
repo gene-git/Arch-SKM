@@ -1,5 +1,8 @@
 #!/usr/bin/python
 #
+"""
+# install_certs.py
+#
 # Called from package_headers()
 #
 # Installs the current keys and signing scripts.
@@ -15,6 +18,7 @@
 #
 # The destination directory will be created if it doesn't exist
 #
+"""
 # Gene 2022-04-31
 #
 import os
@@ -49,7 +53,7 @@ def _parse_args(av):
 def _run_prog_verb(pargs):
 
     ok = True
-    [rc, stdout, stderr] = utils.run_prog(pargs)
+    [rc, _stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         ok = False
         print ('Error  with : ' + ' ' .join(pargs))
@@ -59,6 +63,10 @@ def _run_prog_verb(pargs):
     return ok
 
 def main():
+    """
+     install_certs
+     Installs certificates and tools needed to sign module
+    """
 
     src_dir,dst_dir = _parse_args(sys.argv)
     if not dst_dir:
