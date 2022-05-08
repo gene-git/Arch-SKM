@@ -41,3 +41,14 @@ def file_list_glob(pathname) :
     flist = glob.glob(pathname, recursive=False)
 
     return flist
+# ------------------------------------------------------
+# unlink/remove file (not directory)
+#
+def remove_file(fpath):
+    if os.path.exists(fpath):
+        try:
+            os.unlink(fpath)
+        except:
+            print('Failed to remove file : ' + fpath)
+    return
+

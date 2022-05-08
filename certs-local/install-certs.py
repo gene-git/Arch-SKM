@@ -4,7 +4,9 @@
 #
 # Installs the current keys and signing scripts.
 #   .. certs-local/current -> dest_dir
-#   .. certs-local/sign_manual -> dest_dir
+#   .. certs-local/sign_module.py -> dest_dir
+#   .. certs-local/signer_class.py -> dest_dir
+#   .. certs-local/utils.py -> dest_dir
 #
 # Takes 1 Argument which is the destination directory
 # Must reside in same certs-local directory with key/certs.
@@ -17,7 +19,6 @@
 #
 import os
 import sys
-
 import utils
 
 #
@@ -45,10 +46,9 @@ def _parse_args(av):
 
     return src_dir, dst_dir
 
-def _run_prog_verb(cmd):
+def _run_prog_verb(pargs):
 
     ok = True
-    pargs = cmd.split()
     [rc, stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         ok = False
@@ -69,14 +69,15 @@ def main():
     key_dir = os.path.join(src_dir, key_dir)
     key_dir = os.path.abspath(key_dir)
 
-    cmd = '/usr/bin/rsync -a ' + cur_path + ' ' + key_dir + ' ' + dst_dir
-    ok = _run_prog_verb(cmd)
-    if not ok:
-        return
-
     signer = os.path.join(src_dir, 'sign_module.py')
-    cmd = '/usr/bin/rsync -a ' + signer + ' ' + dst_dir
-    ok = _run_prog_verb(cmd)
+    signer_class = os.path.join(src_dir, 'signer_class.py')
+    utils = os.path.join(src_dir, 'utils.py')
+
+    # list of things to copy to dst_dir
+    flist = [cur_path, key_dir, signer, signer_class, utils]
+    pargs = ['/usr/bin/rsync', '-a'] + flist + [dst_dir]
+
+    ok = _run_prog_verb(pargs)
     if not ok:
         return
 

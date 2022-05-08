@@ -1,4 +1,10 @@
 
+### version [2.3.0] 20220508
+
+ - Code re-org to be more robust and easier to read.
+ - Introduce KernelModSigner class and ModuleTool class to help organize
+ - Functionality is unchanged.
+
 ### version [2.2.1] 20220504
 
  - Update README to reflect new python sign_module.py

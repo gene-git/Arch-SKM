@@ -21,9 +21,11 @@ This provides the tools needed to build a kernel with support for signed modules
         1. certs-local/genkeys.py
         2. certs-local/x509.oot.genkey
         3. certs-local/install-certs.py
-        4. certs-local/sign_manual.sh
-        5. certs-local/dkms/kernel-sign.conf
-        6. certs-local/dkms/kernel-sign.sh
+        4. certs-local/sign_manual.py
+        5. certs-local/utils.py
+        6. certs-local/signer_class.py
+        7. certs-local/dkms/kernel-sign.conf
+        8. certs-local/dkms/kernel-sign.sh
     8.  Arch AUR package
 
 ### See:
@@ -244,15 +246,16 @@ The default key regeneration refresh period is 7 days, but this can be changed o
 
 # 7. Files Required 
 
-These are the supporting files referenced above. Do not forget to make the scripts executable.
+This is the list of files referenced above. Do not forget to make the scripts executable.
 
   - certs-local/genkeys.py
   - certs-local/install-certs.py
   - certs-local/x509.oot.genkey
   - certs-local/sign_module.py
+  - certs-local/utils.py
+  - certs-local/signer_class.py
   - certs-local/dkms/kernel-sign.conf
   - certs-local/dkms/kernel-sign.sh
-
 
 # 8. Arch AUR packags
 
