@@ -52,7 +52,7 @@ def _run_prog_verb(pargs):
     [rc, stdout, stderr] = utils.run_prog(pargs)
     if rc != 0:
         ok = False
-        print ('Error  with : ' + cmd)
+        print ('Error  with : ' + ' ' .join(pargs)
         if stderr:
             print(stderr)
 
