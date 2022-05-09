@@ -154,7 +154,7 @@ def check_kern_config(conf):
                     if count >= num_to_match:
                         # quit if got the config items we need to check
                         break
-        except (OSError, IOError) as err:
+        except OSError as err:
             print (f'Failed to open : {kconfig} - error : {err}')
             num_with_errors += 1
 
@@ -226,7 +226,7 @@ def update_one_config(conf, kconfig_path, signing_key):
     try:
         with open(kconfig_path, 'r') as fp:
             kconfig_rows = fp.readlines()
-    except (OSError,IOError) as err:
+    except OSError as err:
         print (f'Failed to open : {kconfig_path} - error : {err}')
 
     changed = True
@@ -251,7 +251,7 @@ def update_one_config(conf, kconfig_path, signing_key):
             with open(kconfig_path_temp, 'w') as fp:
                 for row in new_rows:
                     fp.write(row)
-        except (OSError,IOError) as err:
+        except OSError as err:
             print (f'Failed to write : {kconfig_path_temp} - error : {err}')
 
         os.rename(kconfig_path_temp, kconfig_path)
@@ -346,13 +346,13 @@ def make_new_keys (conf):
     try:
         with open(khash_file,'w') as fp:
             fp.write(khash + '\n')
-    except (OSError,IOError) as err:
+    except OSError as err:
         print (f'Failed to write : {khash_file} - error : {err}')
 
     try:
         with open(ktype_file,'w') as fp:
             fp.write(ktype + '\n')
-    except (OSError,IOError) as err:
+    except OSError as err:
         print (f'Failed to open : {ktype_file} - error : {err}')
 
     # update current link to new kdir
