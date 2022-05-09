@@ -1,4 +1,8 @@
 
+### version [2.3.3] 2022xxxx
+
+ - Change IOError exception to OSError. Latter is way foeward, former is currently an alias to OSError
+
 ### version [2.3.2] 20220508
 
  - Little more code tidy up 
