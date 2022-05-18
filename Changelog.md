@@ -1,5 +1,9 @@
 
-### version [2.3.4] 20220512
+### version [2.3.5] 20220518
+
+ - More tidy up - try keep pylint noise down so dont miss things it finds
+
+### version [2.3.4] 20220518
 
  - More tidy up code in genkeys.py
  - No functional change.
