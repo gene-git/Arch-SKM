@@ -1,27 +1,27 @@
 #!/usr/bin/python
 """
-# Create new pub/priv key pair for signing out of tree kernel modules.
-# This program must reside in the certs-local dir but can be run from any directory.
-# It will use it's own path to locate the cert-local dir
-#
-# Each key pair is stored by date-time
-#
-# Args:
-#  refresh  - time before new keys are created. e.g. --refresh 24h
-#             default is 7days. Units may be abbreviateed and one of secs, mins, hours,
-#             days or weeks
-#  khash    - sets hash (default is sha512)
-#  ktype    - rsa or ec (default is ec)
-#  config   - config file to update with signing key. May contain wildcard
-#             e.g. --config config
-#                  --config ../configs/config.*
-#
-# (This tool replaces both of the older bash scripts:  genkeys.sh and fix_config.sh)
-# NB:
-#   We always check the config - even if not refreshing keys to be sure it has the
-#   current signing key.
-#
-#  Default refresh key is 7 days
+ Create new pub/priv key pair for signing out of tree kernel modules.
+ This program must reside in the certs-local dir but can be run from any directory.
+ It will use it's own path to locate the cert-local dir
+
+ Each key pair is stored by date-time
+
+ Args:
+  refresh  - time before new keys are created. e.g. --refresh 24h
+             default is 7days. Units may be abbreviateed and one of secs, mins, hours,
+             days or weeks
+  khash    - sets hash (default is sha512)
+  ktype    - rsa or ec (default is ec)
+  config   - config file to update with signing key. May contain wildcard
+             e.g. --config config
+                  --config ../configs/config.*
+
+ (This tool replaces both of the older bash scripts:  genkeys.sh and fix_config.sh)
+ NB:
+   We always check the config - even if not refreshing keys to be sure it has the
+   current signing key.
+
+  Default refresh key is 7 days
 """
 # Gene 2022-04-30
 #
@@ -41,61 +41,64 @@ def initialize() :
     """
      Command line args and initialize
     """
-    me = os.path.basename(sys.argv[0])
+    myname = os.path.basename(sys.argv[0])
     cert_dir = os.path.dirname(sys.argv[0])
     cert_dir = os.path.abspath(cert_dir)
     cwd = os.getcwd()
 
-    ap = argparse.ArgumentParser(description=me)
-
+    if cwd == cert_dir:
+        config = '../config'
+    else:
+        config = './config'
     verb = False
     refresh = '7d'
-    if cwd == cert_dir:
-        kconfig = '../config'
-    else:
-        kconfig = './config'
     khash = 'sha512'
     ktype = 'ec'
 
-    ap.add_argument('-r',  '--refresh',
-            help='key refresh period (' + refresh + ') E.g. "7d", "24h", "always"')
-    ap.add_argument('-c',  '--config',
-            help='Kernel Config(s) to be updated (' + kconfig
-                   + ') - wildcards ok (please quote to avoid shell expansion).')
-    ap.add_argument('-kh', '--khash',   help='Hash type (' + khash + ')')
-    ap.add_argument('-kt', '--ktype',   help='Crypto algo (' + khash
-                    + ') - Must be either ec or rsa')
-    ap.add_argument('-v',  '--verb', action='store_true', help='Verbose')
-
-    parg = ap.parse_args()
-    if parg.refresh:
-        refresh = parg.refresh
-    if parg.config:
-        kconfig = parg.config
-    if parg.khash:
-        khash = parg.khash
-    if parg.ktype:
-        ktype = parg.ktype
-    if parg.verb:
-        verb = parg.verb
-
-    kconfig_list = utils.file_list_glob(kconfig)
-    if not kconfig_list :
-        print ('No matching kernel config files found')
-        return None
-
-    # read kernel config and check for EC in config
-    #khash,ktype = kern_config_hash(kconfig)
     conf = {
             'cert_dir'  : cert_dir,
             'cwd'       : cwd,
             'refresh'   : refresh,
-            'kconfig'   : kconfig,
-            'kconfig_list' : kconfig_list,
             'khash'     : khash,
             'ktype'     : ktype,
             'verb'      : verb,
+            'config'    : config,
+            'kconfig_list' : None,
            }
+
+    par = argparse.ArgumentParser(description=myname)
+
+    par.add_argument('-r',  '--refresh',
+            default = refresh,
+            help=f'key refresh period ({refresh}) E.g. "7d", "24h", "always"')
+
+    par.add_argument('-c',  '--config',
+            default = config,
+            help=f'Kernel Config(s) to be updated ({config})'
+                   + ' - wildcards ok (quote to avoid shell expansion).')
+
+    par.add_argument('-kh', '--khash',
+            default = khash,
+            help=f'Hash type ({khash})')
+
+    par.add_argument('-kt', '--ktype',
+            default = ktype,
+            help=f'Crypto algo ({ktype}) - Must be either ec or rsa')
+
+    par.add_argument('-v',  '--verb',
+            action='store_true', default = verb,
+            help='Verbose')
+
+    parsed = par.parse_args()
+    if parsed:
+        for (opt,val) in vars(parsed).items() :
+            conf[opt] = val
+
+    kconfig_list = utils.file_list_glob(conf['config'])
+    if not kconfig_list :
+        print ('No matching kernel config files found')
+        return None
+    conf['kconfig_list'] = kconfig_list
 
     return conf
 
@@ -109,19 +112,18 @@ def check_kern_config(conf):
     # Check kernel config(s) :
     # The config(s) checked to ensure hash and key_type match whats expected
     """
-    ok = True
+    is_ok = True
     khash = conf['khash']
     ktype = conf['ktype']
     kconfig_list = conf['kconfig_list']
 
-    config = {
+    setting = {
             'rsa' : 'CONFIG_MODULE_SIG_KEY_TYPE_RSA',
             'ec'  : 'CONFIG_MODULE_SIG_KEY_TYPE_ECDSA',
             }
 
-    this_config_type = config[ktype]
-    to_match = {'ktype' : this_config_type,
-                'khash'  : 'CONFIG_MODULE_SIG_HASH',
+    to_match = {'ktype' : setting[ktype],
+                'khash' : 'CONFIG_MODULE_SIG_HASH',
                }
     want_get = {'ktype' : 'y',
                 'khash' : khash,
@@ -134,9 +136,9 @@ def check_kern_config(conf):
     num_with_errors = 0
     for kconfig in kconfig_list:
         try:
-            with open(kconfig, 'r') as fp:
-                conf_items = fp.readlines()
-                fp.close ()
+            with open(kconfig, 'r') as fobj:
+                conf_items = fobj.readlines()
+                fobj.close ()
                 count = 0
                 for item in conf_items:
                     for ckey, config_opt in to_match.items():
@@ -161,9 +163,9 @@ def check_kern_config(conf):
     if num_with_errors > 0:
         print (' ' + str(num_with_errors) + ' out of ' + str(num_kconfigs)
                 + ' bad kernel config files')
-        return not ok
+        return not is_ok
 
-    return ok
+    return is_ok
 
 #------------------------------------------------------------------------
 # Safest is to always read the current link and check config regardless if key was refreshed.
@@ -201,8 +203,8 @@ def update_configs(conf):
 
     for kconfig in kconfig_list:
         kconfig_path = os.path.abspath(kconfig)
-        ok = update_one_config(conf, kconfig_path, signing_key)
-        all_ok = all_ok | ok
+        is_ok = update_one_config(conf, kconfig_path, signing_key)
+        all_ok = all_ok | is_ok
 
     return all_ok
 
@@ -211,7 +213,7 @@ def update_one_config(conf, kconfig_path, signing_key):
     """
      update a single kernel config
     """
-    ok = True
+    is_ok = True
     verb = conf['verb']
 
     kconfig_dir = os.path.dirname(kconfig_path)
@@ -224,8 +226,8 @@ def update_one_config(conf, kconfig_path, signing_key):
 
     # read existing config
     try:
-        with open(kconfig_path, 'r') as fp:
-            kconfig_rows = fp.readlines()
+        with open(kconfig_path, 'r') as fobj:
+            kconfig_rows = fobj.readlines()
     except OSError as err:
         print (f'Failed to open : {kconfig_path} - error : {err}')
 
@@ -248,9 +250,9 @@ def update_one_config(conf, kconfig_path, signing_key):
             print ('Updating config: ' + kconfig_path)
 
         try:
-            with open(kconfig_path_temp, 'w') as fp:
+            with open(kconfig_path_temp, 'w') as fobj:
                 for row in new_rows:
-                    fp.write(row)
+                    fobj.write(row)
         except OSError as err:
             print (f'Failed to write : {kconfig_path_temp} - error : {err}')
 
@@ -259,7 +261,7 @@ def update_one_config(conf, kconfig_path, signing_key):
         if verb:
             print ('config up to date')
 
-    return ok
+    return is_ok
 
 #------------------------------------------------------------------------
 def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
@@ -267,7 +269,7 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
     # Make the actual keys - rsa or ec using openssl
     """
     verb = conf['verb']
-    ok = True
+    is_ok = True
     cmd = 'openssl req -new -nodes -utf8 -' + khash + ' -days ' + kvalid
     cmd = cmd + ' -batch -x509 -config ' + kx509
     cmd = cmd + ' -outform PEM' + ' -out ' + kkey + ' -keyout ' + kkey
@@ -276,34 +278,34 @@ def create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt) :
         cmd = cmd + ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
 
     pargs = cmd.split()
-    [rc, _stdout, stderr] = utils.run_prog(pargs)
+    [retc, _stdout, stderr] = utils.run_prog(pargs)
 
-    if rc != 0:
+    if retc != 0:
         print('Error making new key')
         if verb and stderr:
             print(stderr)
-        return not ok
+        return not is_ok
     os.chmod (kkey, stat.S_IREAD|stat.S_IWRITE)
 
     cmd = 'openssl pkey -in ' + kkey + ' -out ' +  kprv
     pargs = cmd.split()
-    [rc, _stdout, stderr] = utils.run_prog(pargs)
-    if rc != 0:
+    [retc, _stdout, stderr] = utils.run_prog(pargs)
+    if retc != 0:
         print('Error making prv key')
         if verb and stderr:
             print(stderr)
-        return not ok
+        return not is_ok
 
     cmd = 'openssl x509 -outform der -in ' + kkey + ' -out '  + kcrt
     pargs = cmd.split()
-    [rc, _stdout, stderr] = utils.run_prog(pargs)
-    if rc != 0:
+    [retc, _stdout, stderr] = utils.run_prog(pargs)
+    if retc != 0:
         print('Error making crt')
         if verb and stderr:
             print(stderr)
-        return not ok
+        return not is_ok
 
-    return ok
+    return is_ok
 
 #------------------------------------------------------------------------
 def make_new_keys (conf):
@@ -311,7 +313,7 @@ def make_new_keys (conf):
     # Set up before we use openssl to create_new_keys()
     """
 
-    ok = True
+    is_ok = True
     cert_dir = conf['cert_dir']
     verb = conf['verb']
 
@@ -336,29 +338,29 @@ def make_new_keys (conf):
     khash_file = os.path.join(kdir, 'khash')
     ktype_file = os.path.join(kdir, 'ktype')
 
-    ok = create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt)
-    if not ok:
-        return not ok
+    is_ok = create_new_keys(conf, ktype, kvalid, kx509, khash, kprv, kkey, kcrt)
+    if not is_ok:
+        return not is_ok
 
     #
     # khash and ktype in same dir - the signing script will read the hash to use
     #
     try:
-        with open(khash_file,'w') as fp:
-            fp.write(khash + '\n')
+        with open(khash_file,'w') as fobj:
+            fobj.write(khash + '\n')
     except OSError as err:
         print (f'Failed to write : {khash_file} - error : {err}')
 
     try:
-        with open(ktype_file,'w') as fp:
-            fp.write(ktype + '\n')
+        with open(ktype_file,'w') as fobj:
+            fobj.write(ktype + '\n')
     except OSError as err:
         print (f'Failed to open : {ktype_file} - error : {err}')
 
     # update current link to new kdir
     # since the 'current' link and the actual keydir are in same dir we use
     # relative for link - safest in case certs-local is moved
-    if ok:
+    if is_ok:
         link_temp = str(uuid.uuid4())
         link_temp = os.path.join(cert_dir, link_temp)
 
@@ -368,7 +370,7 @@ def make_new_keys (conf):
         os.symlink(kdir_rel, link_temp)
         os.rename(link_temp, cur_link)
 
-    return ok
+    return is_ok
 
 #------------------------------------------------------------------------
 #
@@ -378,14 +380,14 @@ def check_refresh(conf):
     """
     # check if key refresh is needed
     """
-    ok = True
+    is_ok = True
     refresh = conf.get('refresh')
     cert_dir = conf.get('cert_dir')
 
     if not refresh:
-        return ok
+        return is_ok
     if refresh.lower() == 'always':
-        return ok
+        return is_ok
 
     # get the refresh time
     parse = re.findall(r'(\d+)(\w+)', refresh)[0]
@@ -395,7 +397,7 @@ def check_refresh(conf):
         units = parse[1]
     else:
         print ('Failed to parse refresh string')
-        return ok
+        return is_ok
 
     kfile = os.path.join(cert_dir, 'current', 'signing_key.pem')
     if os.path.exists(kfile) :
@@ -404,20 +406,21 @@ def check_refresh(conf):
 
         match units[0]:
             case 's':
-                next_dt = curr_dt + datetime.timedelta(seconds=freq)
+                timedelta_opts = {'seconds' : freq}
             case 'm':
-                next_dt = curr_dt + datetime.timedelta(minutes=freq)
+                timedelta_opts = {'minutes' : freq}
             case 'h':
-                next_dt = curr_dt + datetime.timedelta(hours=freq)
+                timedelta_opts = {'hours' : freq}
             case 'd':
-                next_dt = curr_dt + datetime.timedelta(days=freq)
+                timedelta_opts = {'days' : freq}
             case 'w':
-                next_dt = curr_dt + datetime.timedelta(weeks=freq)
+                timedelta_opts = {'weeks' : freq}
 
+        next_dt = curr_dt + datetime.timedelta(**timedelta_opts)
         now = utils.date_time_now()
         if next_dt > now:
-            ok = False
-    return ok
+            is_ok = False
+    return is_ok
 
 def main():
     """
