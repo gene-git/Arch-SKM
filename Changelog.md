@@ -1,4 +1,8 @@
 
+### version [2.3.6] 20220518
+
+ - Fix bug using encoding for binary file open() - thanks pylint.
+
 ### version [2.3.5] 20220518
 
  - More tidy up - try keep pylint noise down so dont miss things it finds
