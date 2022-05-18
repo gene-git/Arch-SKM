@@ -1,4 +1,9 @@
 
+### version [2.3.4] 20220512
+
+ - More tidy up code in genkeys.py
+ - No functional change.
+
 ### version [2.3.3] 20220512
 
  - Change IOError exception to OSError. Latter is way foeward, former is currently an alias to OSError
