@@ -53,7 +53,7 @@ def open_file(path, mode):
 #------------------------------------------------------------------------
 class GenKeys :
     """
-    Class to help create and out of tree kernel signing keys
+    Class to create out of tree kernel signing keys
     """
     def __init__(self) :
         """
