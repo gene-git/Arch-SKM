@@ -76,7 +76,7 @@ def open_file(path, mode):
         else:
             fobj = open(path, mode, encoding='utf-8')
 
-    except (OSError,FileNotFoundError) as err:
+    except OSError as err:
         print(f'Error opening {path} : {err}')
         fobj = None
 
