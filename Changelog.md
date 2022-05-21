@@ -1,4 +1,8 @@
 
+### version [2.3.7] 20220518
+
+ - Catch both (OSError,FileNotFoundError) in open_file
+
 ### version [2.3.6] 20220518
 
  - Fix bug using encoding for binary file open() - thanks pylint.
