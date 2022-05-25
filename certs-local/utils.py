@@ -70,6 +70,7 @@ def open_file(path, mode):
     open a file handlilng any exceptions
     Returns file object
     """
+    # pylint: disable=W1514,R1732
     try:
         if 'b' in mode:
             fobj = open(path, mode)

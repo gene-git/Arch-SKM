@@ -41,6 +41,7 @@ class GenKeys :
     """
     Class to create out of tree kernel signing keys
     """
+    # pylint: disable=R0902
     def __init__(self) :
         """
         Command line args and initialize
@@ -100,6 +101,7 @@ class GenKeys :
         # Check kernel config(s) :
         # The config(s) checked to ensure hash and key_type match whats expected
         """
+        # pylint: disable=R0914
         okay = True
 
         setting = {
@@ -192,6 +194,7 @@ class GenKeys :
         """
         update a single kernel config
         """
+        # pylint: disable=R0914
         okay = True
         kconfig_dir = os.path.dirname(kconfig_path)
 
@@ -247,6 +250,7 @@ class GenKeys :
         """
         Make the actual keys - rsa or ec using openssl
         """
+        # pylint: disable=R0913
         okay = True
 
         # new key
@@ -290,8 +294,9 @@ class GenKeys :
 
     def make_new_keys (self):
         """
-        # Set up before we use openssl to create_new_keys()
+        Set up before we use openssl to create_new_keys()
         """
+        # pylint: disable=R0914
         okay = True
         if self.verb:
             print ('Making new keys ')

@@ -1,43 +1,43 @@
 #!/usr/bin/python
 """
-# -------------------------
-#   class KernelModSigner
-#       Handles signing, keys etc
-# -------------------------
-#   class ModuleTool
-#       uses KernelModSigner
-#       For one module: read/write/compress/decompress and sign
-# -------------------------
-#
-# Handle the actual signing of one kernel module
-#
-#  Modules can be uncompressed (.ko) or compressed with zstd (.zst), xz (.xz) or gzip (.gz)
-#  Modules may also be already signed in which case the signature is stripped out before re-signing.
-#
-#  NB - stripping removes all debug info including signature.
-#
-#  Notes:
-#  --------
-#  get_kernel_signer()
-#
-#  sign_module.py is installed in each kernel build directory under certs-local.
-#  So, this uses that to locate the kernel build dir and hence the kernel (compiled) signing tool
-#
-#  i.e.
-#      me = '/usr/lib/modules/<kern-vers>/build/certs-local/sign_module.py'
-#      signer = /usr/lib/modules/<kern-vers>/build/scripts/sign-file
-#
-#  key files reside in current dir:
-#      /usr/lib/modules/<kern-vers>/build/certs-local/current/
-#      signing_key.pem , signing_crt.crt, khash
-#
-# We use file extension to determine if/how compressed. We do not use magic bytes
-# We work in memory rather than via filesystem - each module is small emough its not a problem
-#
-# While it may be fine to leave existing sig and sign the (previously) signed module - we choose to
-# strip it. Maybe simpler and cleaner not to bother - not clear if this may cause problem for
-# kernel sig check or not. So we strip it out. This also removes any debug symbols so it has a
-# different downside if the module had any debug info.
+ -------------------------
+   class KernelModSigner
+       Handles signing, keys etc
+ -------------------------
+   class ModuleTool
+       uses KernelModSigner
+       For one module: read/write/compress/decompress and sign
+ -------------------------
+
+ Handle the actual signing of one kernel module
+
+  Modules can be uncompressed (.ko) or compressed with zstd (.zst), xz (.xz) or gzip (.gz)
+  Modules may also be already signed in which case the signature is stripped out before re-signing.
+
+  NB - stripping removes all debug info including signature.
+
+  Notes:
+  --------
+  get_kernel_signer()
+
+  sign_module.py is installed in each kernel build directory under certs-local.
+  So, this uses that to locate the kernel build dir and hence the kernel (compiled) signing tool
+
+  i.e.
+      me = '/usr/lib/modules/<kern-vers>/build/certs-local/sign_module.py'
+      signer = /usr/lib/modules/<kern-vers>/build/scripts/sign-file
+
+  key files reside in current dir:
+      /usr/lib/modules/<kern-vers>/build/certs-local/current/
+      signing_key.pem , signing_crt.crt, khash
+
+ We use file extension to determine if/how compressed. We do not use magic bytes
+ We work in memory rather than via filesystem - each module is small emough its not a problem
+
+ While it may be fine to leave existing sig and sign the (previously) signed module - we choose to
+ strip it. Maybe simpler and cleaner not to bother - not clear if this may cause problem for
+ kernel sig check or not. So we strip it out. This also removes any debug symbols so it has a
+ different downside if the module had any debug info.
 """
 #
 # Gene - 2022-0508
@@ -58,6 +58,7 @@ class KernelModSigner:
      Once instantiated use to sign module(s)
      Public methods: sign_module()
     """
+    # pylint: disable=R0903
     def __init__(self, myname):
         self.signer = None
         self.key = None
@@ -139,7 +140,7 @@ class ModuleTool:
      Tools to decompress, recompress and check and remove existing signature, sign module file
      Public methods: read() and sign()
     """
-
+    # pylint: disable=R0902
     def __init__ (self, signer, mod_path):
         self.signer = signer
         self.data = None
@@ -219,6 +220,7 @@ class ModuleTool:
         """
          sign temp file, compress if needed  and rename to orig.
         """
+        # pylint: disable=R0911
         okay = True
         data = self.read()
         if not data:

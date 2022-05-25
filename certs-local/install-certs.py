@@ -1,24 +1,25 @@
 #!/usr/bin/python
 #
 """
-# install_certs.py
-#
-# Called from package_headers()
-#
-# Installs the current keys and signing scripts.
-#   .. certs-local/current -> dest_dir
-#   .. certs-local/sign_module.py -> dest_dir
-#   .. certs-local/signer_class.py -> dest_dir
-#   .. certs-local/utils.py -> dest_dir
-#
-# Takes 1 Argument which is the destination directory
-# Must reside in same certs-local directory with key/certs.
-#
-# To be used in PKGBUILD
-#
-# The destination directory will be created if it doesn't exist
-#
+ install_certs.py
+
+ Called from package_headers()
+
+ Installs the current keys and signing scripts.
+   .. certs-local/current -> dest_dir
+   .. certs-local/sign_module.py -> dest_dir
+   .. certs-local/signer_class.py -> dest_dir
+   .. certs-local/utils.py -> dest_dir
+
+ Takes 1 Argument which is the destination directory
+ Must reside in same certs-local directory with key/certs.
+
+ To be used in PKGBUILD
+
+ The destination directory will be created if it doesn't exist
+
 """
+# pylint: disable=C0103
 # Gene 2022-04-31
 #
 import os

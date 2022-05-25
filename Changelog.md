@@ -1,4 +1,12 @@
 
+### version [2.3.9] 20220525
+
+ - Suppress a few silly pylint warnings. 
+
+### version [2.3.8] 20220518
+
+ - Remove uneeded exception we just added. It is a subclass of OSError and so not needed.
+
 ### version [2.3.7] 20220518
 
  - Catch both (OSError,FileNotFoundError) in open_file
