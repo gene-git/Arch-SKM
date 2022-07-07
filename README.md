@@ -31,7 +31,7 @@ This provides the tools needed to build a kernel with support for signed modules
 ### See:
 
  - [Arch Wiki on signed kernel modules](https://wiki.archlinux.org/title/Signed_kernel_modules)
- - [Kernel Docs on module signing](https://www.kernel.org/doc/html/v5.18-rc4/admin-guide/module-signing.html)
+ - [Kernel Docs on module signing](https://www.kernel.org/doc/html/v5.19-rc5/admin-guide/module-signing.html)
 
 # 1. Introduction 
 
