@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2020-2023 Gene C
 """
  Create new pub/priv key pair for signing out of tree kernel modules.
  This program must reside in the certs-local dir but can be run from any directory.

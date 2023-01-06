@@ -1,5 +1,6 @@
 #!/usr/bin/python
-#
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2020-2023 Gene C
 """
  install_certs.py
 

@@ -1,170 +1,171 @@
-
-### version [2.3.9] 20220525
-
- - Suppress a few silly pylint warnings. 
-
-### version [2.3.8] 20220518
-
- - Remove uneeded exception we just added. It is a subclass of OSError and so not needed.
-
-### version [2.3.7] 20220518
-
- - Catch both (OSError,FileNotFoundError) in open_file
-
-### version [2.3.6] 20220518
-
- - Fix bug using encoding for binary file open() - thanks pylint.
-
-### version [2.3.5] 20220518
-
- - More tidy up - try keep pylint noise down so dont miss things it finds
-
-### version [2.3.4] 20220518
-
- - More tidy up code in genkeys.py
- - No functional change.
-
-### version [2.3.3] 20220512
-
- - Change IOError exception to OSError. Latter is way foeward, former is currently an alias to OSError
-
-### version [2.3.2] 20220508
-
- - Little more code tidy up 
- - Ack and Tested by by @itoffshore
-
-### version [2.3.1] 20220508
-
- - Some more code tidy up and bug fix for refresh check
-
-### version [2.3.0] 20220508
-
- - Code re-org to be more robust and easier to read.
- - Introduce KernelModSigner class and ModuleTool class to help organize
- - Functionality is unchanged.
-
-### version [2.2.1] 20220504
-
- - Update README to reflect new python sign_module.py
-
-### version [2.2.0] 20220504
-
- - Improve module signing scripts.
- - sign_module.py replaces sign_manual.sh
- - dkms/kernel_sign.sh updated accordingly
- - install-certs updated accordingly
- - adds dependency : python-zstandard for handling zst compressed modules
-
-### version [2.1.1] 20220503
-
- - Bah, typo
-
-### version [2.1.0] 20220503
-
- - The key type and hash are now saved in files along side the keys. 
-   This allows the signing script to read them, and means it no longer has hardcoded hash.  
-   The sign script falls back on sha512 in case (older) key directory has no saved hash file
-
-### version [2.0.0] 20220502
-
- - Significant recent changes warrant a major version bump.
-
-### version [1.3.5] 20220502
-
- - Typo in README
- - Add some more info about tools availabe by @itoffshore leveraging Arch-SKM.
-
-### version [1.3.4] 20220502
-
- - Apply whitespace patches from @itoffshore
-
-### version [1.3.3] 20220502
-
- - Add reference to @itoffshore aur package and github repo
- - Typo in echo found by @itoffshore
-
-### version [1.3.2] 20220502
-
- - Fix hexdump typo "--e" to "-e"
-
-### version [1.3.1] 20220502
-
- - Typo
-
-### version [1.3.0] 20220501
-
- - Fixes from @itoffshore
-    1. For manual signing
-       zstd modules use .zst instead of .zstd
-       Add support for gzip
-    2. For dkms
-       Add gzip support
- - Update README with comment about quoting wildcard characters
-
-### version [1.2.0] 20220501
-
- - Expand help with reminder wildcards must be quoted
-
-### version [1.1.0] 20220501
-
- - Tweak the prepare() example
- - Word smithing
-
-### version [1.0.1] 20220501
-
- - Turn off debug
-
-### version [1.0.0] 20220501
-
- - Provide install-certs.py to simplfy PKGBUILD
- - Enhance genkeys:
-     - Can be run from any directory, but must reside in certs-local
-     - Defaults to elliptic curve and sha512 hash. Can be overriden on command line.
-     - Accepts one or multiple config files to be updated with same key. 
-       Provide config file(s) using shell globs. E.g
-       genkeys.py --config 'confdir/config.*'
-
-### version [0.8.1] 20220430
-
-  - Remove references to now unused scripts
-
-### version [0.8.0] 20220430
-
-  - Fix Issue #2 on github 
-    Per itoffshore check for key exists prior to getting mtime. Fixes bug in check_refresh(
-  - Tidy up README
-  - fix typo
-
-### version [0.7.0] 20220430
-
-  - Add genkeys.py (replaces both genkeys.sh and fix_config.sh) 
-    This supports refresh key frequency (default is 7 days) 
-    PKGBUILD use: ./genkeys.py -v
-    Creates new keys as needed and updates kernel config.
-
-### version [0.6.0] 20220430
-
-  - Support zstd module compression in sign_manual.sh
-  - Improve hexdump for signed module detection in sign_manual.sh
-  - Has hardcoded sha512 hash - needs updating/replacing
-
-### version [0.5.0] 20220420
-
-  - Switch to using elliptic curve 
-
-### version [0.4.0] 20221021
-
-  - Update kernel-sign.sh to handle compressed modules
-
-### Version [0.3.0] 20191115
-
-  - Tidy up Readme
-
-### Version [0.2.0] 20191110
-
-  - TIdy up Readme
-
-### Version [0.1.0] 20191110
-
-  - Initial version
+## [HEAD] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-07-07
+ - Update kernel.org doc link to more recent kernel  
+
+## [2.3.9] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-25
+ - suppress a few silly pylint warnings  
+
+## [2.3.8] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-21
+ - Remove uneeded exception we just added. It is a subclass of OSError and so not needed.  
+
+## [2.3.7] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-21
+ - utils open_file catches (OSError,FileNotFoundError) exceoptions now  
+
+## [2.3.6] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-18
+ - update changelog  
+ - Fix open_file to only apply encoding to text files (thanks  pylint)  
+
+## [2.3.5] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-18
+ - - More tidy up - try keep pylint noise down so dont miss things it finds  
+ - delete old stuff  
+ - comment tweak  
+
+## [2.3.4] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-18
+ - Update Changelog  
+ - More code tidying in genkeys  
+ - little more tidyup - no functional changes  
+ - Add missing date to Changelog  
+
+## [2.3.3] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-09
+ - update Changelog  
+ - Use OSError exception which has replaced IOError  
+ - Catch OSError when file open fails  
+
+## [2.3.2] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-08
+ - Ack and Tested by by @itoffshore  
+ - update Changelog  
+ - trivial tidy  
+
+## [2.3.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-08
+ - more code tidying  
+ - Update Changelog  
+ - fix typo for refresh check  
+ - tidy and improve exception handling  
+ - tidy  
+ - more cleaning  
+ - more tidy  
+ - more tidy ups  
+ - some code tidying  
+ - another typo!  
+ - typo  
+ - fix file to name to avoid module conflict  
+
+## [2.3.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-08
+ - - Code re-org to be more robust and easier to read.  
+   - Introduce KernelModSigner class and ModuleTool class to help organize  
+   - Functionality is unchanged.  
+
+## [2.2.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-04
+ - Update Changelog and README to reflect sign_module.py replacing sign_manual.sh  
+ - Changelog - add date for 2.2.0  
+
+## [2.2.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-04
+ - update changelog  
+ - archive sign_manual.sh  
+ - turn off dev to ready for production  
+ - Improve module signing scripts:  
+   - sign_module.py replaces sign_manual.sh  
+   - dkms/kernel_sign.sh updated accordingly  
+   - install-certs updated accordingly  
+   - adds dependency : python-zstandard for handling zst compressed modules  
+ - README - small markdown tweaks  
+
+## [2.1.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-03
+ - update changelog  
+ - typo  
+
+## [2.1.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-03
+ - update Changelog  
+ - The key type and hash are now saved in files along side the keys. This allows the signing script to read them, and this means it no longer has hardcoded hash.  the sign script falls back on sha512 in case of previous key directory without a saved hash  
+ - remove extraneous |  
+
+## [2.0.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - update changelog  
+ - word smith README  
+ - fix markdown on last addition  
+
+## [1.3.5] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - Update README and Changelog  
+ - Add few more words about some available tooks by @itoffshore  
+
+## [1.3.4] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - Update Changelog  
+ - White space patches from @itoffshore  
+
+## [1.3.3] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - Update Changelog  
+ - Typo in echo found by @itoffshore  
+ - Changelog udpate  
+ - Add reference to @itoffshore aur package and github repo  
+
+## [1.3.2] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - Fix hexdump typo "--e" to "-e"  
+ - Changelog update  
+ - Mindor markdown tweaks  
+
+## [1.3.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - typo fix  
+ - Update Changelog  
+
+## [1.3.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-02
+ - Per @ittoffshore, add comment about quoting wildcard characters  
+ - Fixes from @itoffshore  
+   1. For manual signing  
+   zstd modules use .zst instead of .zsrd  
+   support for gzip  
+   2. For dkms  
+   Add gzip support  
+
+## [1.2.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-01
+ - Expand help with reminder wildcards must be quoted  
+
+## [1.1.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-01
+ - tweak the prepare() example  
+ - small word smithing  
+
+## [1.0.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-01
+ - remove debugging  
+
+## [1.0.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-01
+ - Update readme and changelog  
+ - genkeys now handles multiple configs using shell glob with --config  
+ - support utilities  
+ - Rename tools to utils  
+ - Share coupld functions via tools.py  
+ - Add install-certs.py for use by package_headers() to simplify PKGBUILD  
+ - Update package_headers() to remove reference to file no longer being created. Part of issue #3  
+ - Add a little markdown to Changlelog.md  
+ - Update changes for 0.8.0 and 0.8.1  
+
+## [0.8.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-04-30
+ - Remove references to now unused scripts  
+
+## [0.8.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-04-30
+ - fix typo  
+ - Tidy up README  
+ - As per itoffshore check for key exists prior to getting mtime. Fixes bug in check_refresh()  
+
+## [0.7.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-04-30
+ - version [0.7.0]                                                     - 20220430  
+   - Add genkeys.py (replaces both genkeys.sh and fix_config.sh)  
+   This supports refresh key frequency (default is 7 days)  
+   PKGBUILD use: ./genkeys.py -v  
+   Creates new keys as needed and updates kernel config.  
+   version [0.6.0]                                                     - 20220430  
+   - Support zstd module compression in sign_manual.sh  
+   - Improve hexdump for signed module detection in sign_manual.sh  
+   - Has hardcoded sha512 hash - needs updating/replacing  
+   version [0.5.0]                                                     - 20220420  
+   - Switch to using elliptic curve  
+
+## [0.4.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2021-10-20
+ - Update kernel-sign.sh for compressed modules  
+
+## [0.3.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2019-11-15
+ - Tidy Readme  
+
+## [0.2.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2019-11-10
+ - tidy up readme  
+
+## [0.1.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2019-11-10
+ - Initial revision  
 

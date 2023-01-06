@@ -31,7 +31,7 @@ This provides the tools needed to build a kernel with support for signed modules
 ### See:
 
  - [Arch Wiki on signed kernel modules](https://wiki.archlinux.org/title/Signed_kernel_modules)
- - [Kernel Docs on module signing](https://www.kernel.org/doc/html/v5.19-rc5/admin-guide/module-signing.html)
+ - [Kernel Docs on module signing](https://www.kernel.org/doc/html/v6.2-rc2/admin-guide/module-signing.html)
 
 # 1. Introduction 
 
@@ -211,7 +211,7 @@ We need to make changes to kernel build as follows:
         msg2 "Rebuilding local signing key..."
         # adjust cerdir as needed 
         certdir='../certs-local'
-        $certdir/genkeys.py -v --config ../config
+        $certdir/genkeys.py -v --config ../config --refresh 30d
       ... 
     }
 
@@ -269,4 +269,10 @@ arch-sign-modules reduces the manual steps for building a fully signed custom ke
 
  - [README.scripts.md](https://github.com/itoffshore/Arch-SKM/blob/master/README.scripts.md)
  - [PKGBUILD example](https://github.com/itoffshore/Arch-SKM/blob/master/Arch-Linux-PKGBUILD-example)
+
+## License
+
+Created by Gene C. and licensed under the terms of the MIT license.
+ - SPDX-License-Identifier: MIT  
+ - Copyright (c) 2020-2023, Gene C
 
