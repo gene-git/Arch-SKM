@@ -1,4 +1,8 @@
-## [HEAD] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-07-07
+# Changelog
+
+## [2.4.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-01-06
+ - Add SPDX licensing lines  
+   Update kernel doc reference link  
  - Update kernel.org doc link to more recent kernel  
 
 ## [2.3.9] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2022-05-25
