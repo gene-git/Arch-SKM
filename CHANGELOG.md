@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-03-30
+ - Use Full path to openssl executable /usr/bin/openssl  
+ - Rename Changelog to CHANGELOG following our current release tools. Update  
+
 ## [2.4.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-01-06
  - Add SPDX licensing lines  
    Update kernel doc reference link  
