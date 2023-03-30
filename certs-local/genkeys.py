@@ -256,7 +256,7 @@ class GenKeys :
         okay = True
 
         # new key
-        cmd = f'openssl req -new -nodes -utf8 -{self.khash} -days {kvalid}'
+        cmd = f'/usr/bin/openssl req -new -nodes -utf8 -{self.khash} -days {kvalid}'
         cmd = cmd + f' -batch -x509 -config {kx509}'
         cmd = cmd + f' -outform PEM -out {kkey} -keyout {kkey}'
 
@@ -274,7 +274,7 @@ class GenKeys :
         os.chmod (kkey, stat.S_IREAD|stat.S_IWRITE)
 
         # extract private key
-        cmd = f'openssl pkey -in {kkey} -out {kprv}'
+        cmd = f'/usr/bin/openssl pkey -in {kkey} -out {kprv}'
         pargs = cmd.split()
         [retc, _stdout, stderr] = utils.run_prog(pargs)
         if retc != 0:
@@ -284,7 +284,7 @@ class GenKeys :
             return not okay
 
         # Extract certificate (public) part
-        cmd = f'openssl x509 -outform der -in {kkey} -out {kcrt}'
+        cmd = f'/usr/bin/openssl x509 -outform der -in {kkey} -out {kcrt}'
         pargs = cmd.split()
         [retc, _stdout, stderr] = utils.run_prog(pargs)
         if retc != 0:
