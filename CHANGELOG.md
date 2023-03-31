@@ -1,6 +1,7 @@
 # Changelog
 
-## [HEAD] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-03-31
+## [2.5.1] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-03-31
+ - update changelog  
  - small README wordsmithing  
  - update CHANGELOG.md  
 
