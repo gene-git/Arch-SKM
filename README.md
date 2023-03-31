@@ -137,66 +137,74 @@ the updated '.config' file back to the build file 'config'.  It is preferable to
 
 ## 5.1 kernel build package 
 
-  In the directory where the kernel package is built:
+In the directory where the kernel package is built:
 
-  $ mkdir certs-local
+      $ mkdir certs-local
 
-  This directory will provide the tools to create the keys, as well as signing kernel modules.
+This directory will provide the tools to create the keys, as well as signing kernel modules.
 
-  Put these files into certs-local:
+  - Copy these files into certs-local directory:
 
-    genkeys.py
-    x509.oot.genkey
-    install-certs.py
-    sign_module.py
+        genkeys.py
+        x509.oot.genkey
+        install-certs.py
+        sign_module.py
 
-  The files genkey.py and its companion configuration file x509.oot.genkey are used to create key pairs.
-  It also provides the kernel with the key to sign the out of tree modules by updating the config file 
-  used to build the kernel.
+### genkey.py & x509.oot.genkey
 
-  sign_module.py signs out of tree kernel modules. It can be run manually and is invoked 
-by dkms/kernel-sign.sh. It handles modules compressed with xz and gzip and depends on 
+genkey.py along with its configuration file x509.oot.genkey are used to create key pairs.
+It also provides the kernel with the key to sign out of tree modules by updating the config file 
+used to build the kernel.
+
+genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
+the keys every 7 days but this can be changed with the *--refresh* command line option.
+
+It also creates a soft link named 'current' which points to the newly created directory with the 'current' keys.
+The actual key directory is named by date and time.
+
+genkeys will check and update kernel configs given by the  --config config(s) option. This takes either a single
+config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. Remember to quote any wildcard 
+characters to prevent the shell from expanding them. 
+ 
+All configs will be updated with the same key. The default keytype is ec (elliptic curve) and the default
+hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
+
+###  sign_module.py 
+
+signs out of tree kernel modules. It can be run manually but is typically invoked 
+by dkms/kernel-sign.sh. It handles modules compressed with zstad, xz and gzip and depends on 
 python-zstandard package to help handle those compressed with zstd. 
 
-  genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
-  the keys every 7 days but this can be changed with command line option.
 
-  It also creates a soft link named 'current' which points to the newly created directory with the 'current' keys.
-  The actual key directory is named by date and time.
+###  install-certs.py i
 
-  genkeys will check and update kernel configs given by the  --config config(s) option. This takes either a single
-  config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. Remember to quote any wildcard 
-  characters to prevent the shell from expanding them. 
- 
-  All configs will be updated with the same key. The default keytype is ec (elliptic curve) and the default
-  hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
-
-  install-certs.py is to be called from the package_headers() function of PKGBUILD to install the signing keys. Example is given below. 
+is called from the package_headers() function of PKGBUILD to install the signing keys. 
+Example is given below. 
   
-  These files are all provided.
+These files are all provided.
 
-  ## 5.2 dkms support
+## 5.2 dkms support
 
-  $ mkdir certs-local/dkms
+    $ mkdir certs-local/dkms
 
-  Add 2 files to the dkms dir:
+Add 2 files to the dkms dir:
 
-    kernel-sign.conf
-    kernel-sign.sh
+        kernel-sign.conf
+        kernel-sign.sh
 
-  These will be installed in /etc/dkms and provide a mechanism for dkms to automatically sign 
-  modules (using the local key above) - this is the reccommended way to sign kernel modules. 
-  As explained, below - once this is installed - all that is needed to have dkms automatically 
-  sign modules is to make a soft link:
+These will be installed in /etc/dkms and provide a mechanism for dkms to automatically sign 
+modules (using the local key above) - this is the reccommended way to sign kernel modules. 
+As explained, below - once this is installed - all that is needed to have dkms automatically 
+sign modules is to make a soft link:
 
-    $ cd /etc/dkms
-    ln -s kernel-sign.conf <module-name>.conf
+        $ cd /etc/dkms
+        ln -s kernel-sign.conf <module-name>.conf
 
-  For example:
+For example:
 
-    ln -s kernel-sign.conf vboxdrv.conf
+        ln -s kernel-sign.conf vboxdrv.conf
 
-  The link creation can easily be added to an arch package to simplify further if desired.
+The link creation can easily be added to an arch package to simplify further if desired.
 
 # 6. Modify PKGBUILD 
 
@@ -204,7 +212,7 @@ We need to make changes to kernel build as follows:
 
 ## 6.1 prepare()
 
-  Add the following to the top of the prepare() function:
+Add the following to the top of the prepare() function:
 
     prepare() {
 
