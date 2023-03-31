@@ -1,5 +1,9 @@
 # Changelog
 
+## [HEAD] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-03-31
+ - small README wordsmithing  
+ - update CHANGELOG.md  
+
 ## [2.5.0] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 2023-03-30
  - Use Full path to openssl executable /usr/bin/openssl  
  - Rename Changelog to CHANGELOG following our current release tools. Update  
