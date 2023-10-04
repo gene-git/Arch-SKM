@@ -86,7 +86,7 @@ class GenKeys :
 
         par.add_argument('-v',  '--verb',
                 action='store_true', default = self.verb,
-                help='Verbose ({self.verb})')
+                help=f'Verbose ({self.verb})')
 
         parsed = par.parse_args()
         if parsed:
