@@ -40,16 +40,13 @@
  kernel sig check or not. So we strip it out. This also removes any debug symbols so it has a
  different downside if the module had any debug info.
 """
-#
-# Gene - 2022-0508
-#
 import os
 
 import uuid
 import lzma
 import gzip
 import zstandard
-import utils
+from .utils import open_file, remove_file, run_prog
 
 # -------------------------------------------------------------------------------------------
 class KernelModSigner:
@@ -74,15 +71,20 @@ class KernelModSigner:
         my_dir = os.path.dirname(my_path)
         build_dir = os.path.dirname(my_dir)
 
+        #
         # signing executable and keys
+        # For maximal consistency we use the kernel sign-file script
+        #
         self.signer = os.path.join(build_dir, 'scripts/sign-file')
         self.key = os.path.join(my_dir, 'current/signing_key.pem')
         self.crt = os.path.join(my_dir, 'current/signing_crt.crt')
         khash_file = os.path.join(my_dir, 'current/khash')
 
+        #
         # missing khash - temp backward compat only - remove at some point
+        #
         if os.path.exists(khash_file) :
-            fobj = utils.open_file(khash_file, 'r')
+            fobj = open_file(khash_file, 'r')
             if fobj:
                 khash = fobj.read()
                 khash = khash.strip()
@@ -110,7 +112,7 @@ class KernelModSigner:
          Does the actual signing of a module file
         """
         pargs = [self.signer, self.khash, self.key, self.crt, mod_path]
-        [retc, _sout, _serr] = utils.run_prog(pargs)
+        [retc, _sout, _serr] = run_prog(pargs)
         if retc != 0:
             print ('Signing failed')
         return retc
@@ -132,7 +134,7 @@ def strip_sig(mod_path):
      Strips out signature from module file
     """
     pargs =  ['/usr/bin/strip', '--strip-debug', mod_path]
-    [retc, _output, _errors] = utils.run_prog(pargs)
+    [retc, _output, _errors] = run_prog(pargs)
     return retc
 
 class ModuleTool:
@@ -193,7 +195,7 @@ class ModuleTool:
         """
         if self.data:
             return self.data
-        fobj = utils.open_file(self.mod_path, 'rb')
+        fobj = open_file(self.mod_path, 'rb')
         if fobj:
             raw_data = fobj.read()
             fobj.close()
@@ -229,7 +231,7 @@ class ModuleTool:
 
         ftmp = str(uuid.uuid4())
         ptmp = os.path.join(self.mod_dir, ftmp)
-        fobj = utils.open_file(ptmp, 'wb')
+        fobj = open_file(ptmp, 'wb')
         if fobj:
             fobj.write(data)
             fobj.close()
@@ -240,16 +242,16 @@ class ModuleTool:
             ret = strip_sig(ptmp)
             if ret != 0:
                 print ('Failed to strip temp file')
-                utils.remove_file(ptmp)
+                remove_file(ptmp)
                 return not okay
 
         ret = self.signer.sign_module(ptmp)
         if ret != 0:
-            utils.remove_file(ptmp)
+            remove_file(ptmp)
             return not okay
 
         if self.compress:
-            fobj = utils.open_file(ptmp, 'rb')
+            fobj = open_file(ptmp, 'rb')
             if fobj:
                 raw_data = fobj.read()
                 fobj.close()
@@ -264,12 +266,12 @@ class ModuleTool:
                     mod_data = lzma.compress(raw_data)
                 case  '.gz' :
                     mod_data = gzip.compress(raw_data)
-            fobj = utils.open_file(ptmp, 'wb')
+            fobj = open_file(ptmp, 'wb')
             if fobj:
                 fobj.write(mod_data)
                 fobj.close()
             else:
-                utils.remove_file(ptmp)
+                remove_file(ptmp)
                 return not okay
 
         os.rename (ptmp, self.mod_path)

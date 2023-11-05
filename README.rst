@@ -11,6 +11,13 @@ Overview
 Signed kernel modules provide a mechanism for the kernel to verify the integrity of a module.
 This provides the tools needed to build a kernel with support for signed modules.
 
+Latest Changes
+--------------
+
+ * key and hash types are now read from the kernel config file. Keeps everything consistent.
+ * Code re-org with supporing modules now moved to lib/xxx.py
+ * Code works with hash type sha3-xxx (e.g. *sha3-512*) available in kernel 6.7 and openssl 3.2 or later.
+
 Available 
 =========
 
@@ -135,6 +142,10 @@ It is preferable to use elliptic curve type keys and zstd compression.
     Automatically sign all modules  -> activate
     Which hash algorithm    -> SHA-512
 
+    kernel 6.7 and later support sha3 hashes. The preferred hash choice is then
+    sha3-512. This also requires openssl version 3.2 or newer.
+
+
   * CONFIG_MODULE_COMPRESS_ZSTD=y
 
     Compress modules on installation -> activate
@@ -155,7 +166,9 @@ Kernel command line
 ===================
 
 After you are comfortable things are working well you can enable the kernel parameter to 
-require that the kernel only permit verified modules to be loaded::
+require that the kernel only permit verified modules to be loaded:
+
+.. code-block::
 
     module.sig_enforce=1
 
@@ -166,18 +179,23 @@ Tools needed
 kernel build package 
 ====================
 
-In the directory where the kernel package is built::
+In the directory where the kernel package is built:
+
+.. code-block:: bash
 
     mkdir certs-local
 
 This directory will provide the tools to create the keys, as well as signing kernel modules.
 
-  * Copy these files into certs-local directory::
+  * Copy these files into certs-local directory:
+
+.. code-block:: bash
 
         genkeys.py
-        x509.oot.genkey
         install-certs.py
         sign_module.py
+        lib/*.py
+        x509.oot.genkey
 
 genkey.py & x509.oot.genkey
 ---------------------------
@@ -196,15 +214,20 @@ genkeys will check and update kernel configs given by the  --config config(s) op
 config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. Remember to quote any wildcard 
 characters to prevent the shell from expanding them. 
  
-All configs will be updated with the same key. The default keytype is ec (elliptic curve) and the default
-hash is sha512. These can be changed with command line options. See genkeys.py -h for more details.
+All configs will be updated with the same key. The default keytype and hash are taken from 
+the kernel config (from CONFIG_MODULE_SIG_HASH and CONFIG_MODULE_SIG_KEY_TYPE_xxx) [1]_.
 
-###  sign_module.py 
+If multiple kernel configs are being used, all must use same key and hash types.
+
+.. [1] In earlier versions these defaulted to elliptic curve and sha512 and could be set from
+   the command line.
+
+sign_module.py 
+--------------
 
 signs out of tree kernel modules. It can be run manually but is typically invoked 
-by dkms/kernel-sign.sh. It handles modules compressed with zstad, xz and gzip and depends on 
-python-zstandard package to help handle those compressed with zstd. 
-
+by dkms/kernel-sign.sh. It handles modules compressed with zstd, xz and gzip and depends on 
+python-zstandard package to help with those compressed with zstd. 
 
 install-certs.py
 ----------------
@@ -228,7 +251,9 @@ another to use modules, signed or not, that are out-of-tree. Any such module wil
 
     mkdir certs-local/dkms
 
-and add 2 files to the dkms dir::
+and add 2 files to the dkms dir:
+
+.. code-block:: bash
 
         kernel-sign.conf
         kernel-sign.sh
@@ -237,6 +262,7 @@ These will be installed in /etc/dkms and provide a mechanism for dkms to automat
 modules using the local key discussed above - this is the reccommended way to sign kernel modules. 
 As explained, below - once this is installed - all that is needed to have dkms automatically 
 sign modules is to make a soft link:
+
 .. code-block:: bash
 
         cd /etc/dkms
@@ -310,7 +336,7 @@ _package-headers()
     }
 
 **************
-Files Required 
+Required Files
 **************
 
 This is the list of files referenced above. Remember to make scripts executable.
@@ -319,8 +345,16 @@ This is the list of files referenced above. Remember to make scripts executable.
   * certs-local/install-certs.py
   * certs-local/x509.oot.genkey
   * certs-local/sign_module.py
-  * certs-local/utils.py
-  * certs-local/signer_class.py
+
+  * certs-local/lib/arg_parse.py
+  * certs-local/lib/refresh_needed.py
+  * certs-local/lib/class_genkeys.py
+  * certs-local/lib/get_key_hash.py
+  * certs-local/lib/make_keys.py
+  * certs-local/lib/signer_class.py
+  * certs-local/lib/update_config.py
+  * certs-local/lib/utils.py
+
   * certs-local/dkms/kernel-sign.conf
   * certs-local/dkms/kernel-sign.sh
 
@@ -358,4 +392,3 @@ Created by Gene C. and licensed under the terms of the MIT license.
 
  * SPDX-License-Identifier: MIT  
  * Copyright (c) 2020-2023, Gene C
-
