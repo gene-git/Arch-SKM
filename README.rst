@@ -1,12 +1,9 @@
-.. SPDX-License-Identifier: MIT
-
 ###########
 kernel-sign
 ###########
 
-********
 Overview
-********
+========
 
 Signed kernel modules provide a mechanism for the kernel to verify the integrity of a module.
 This provides the tools needed to build a kernel with support for signed modules.
@@ -39,9 +36,9 @@ These docs on signed kernel modules:
 .. _`Kernel/Arch Build System`: https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System
 .. _`tainted_kernel`: https://docs.kernel.org/admin-guide/tainted-kernels.html
 
-************
+############
 Introduction 
-************
+############
 
 Kernel Modules
 ==============
@@ -71,9 +68,9 @@ The choice to permit the loading and use of a module which could not be verified
 compiled into kernel or turned on at run time using a kernel parameter as explained 
 in Arch Wiki Kernel Parameters `Arch Wiki Kernel Parameters`_.
 
-************************************************
+
 How to sign kernel modules using a custom kernel  
-************************************************
+================================================
 
 The starting point is based on building a custom kernel package outlined in 
 Kernel/Arch Build System `Kernel/Arch Build System`_,
@@ -92,9 +89,8 @@ Note: The goal is to have:
   * Out of tree modules are signed and the associated public key is compiled in to the kernel.
     We will create a separate public/private key pair on each build.
 
-********************************
 Summary of what needs to be done 
-********************************
+================================
 
 Each kernel build needs to made aware of the key/cert being used. Fresh keys are 
 generated with each new kernel build.
@@ -110,9 +106,9 @@ Certs are thus installed in ::
 
     /usr/lib/modules/<kernel-vers>-<build>/certs-local.  
 
-********************
+####################
 Kernel configuration  
-********************
+####################
 
 Kernel Config File
 ==================
@@ -168,13 +164,13 @@ Kernel command line
 After you are comfortable things are working well you can enable the kernel parameter to 
 require that the kernel only permit verified modules to be loaded:
 
-.. code-block::
+.. code-block:: bash
 
     module.sig_enforce=1
 
-************
+############
 Tools needed 
-************
+############
 
 kernel build package 
 ====================
@@ -198,7 +194,7 @@ This directory will provide the tools to create the keys, as well as signing ker
         x509.oot.genkey
 
 genkey.py & x509.oot.genkey
----------------------------
+===========================
 
 genkey.py along with its configuration file x509.oot.genkey are used to create key pairs.
 It also provides the kernel with the key to sign out of tree modules by updating the config file 
@@ -223,14 +219,14 @@ If multiple kernel configs are being used, all must use same key and hash types.
    the command line.
 
 sign_module.py 
---------------
+==============
 
 signs out of tree kernel modules. It can be run manually but is typically invoked 
 by dkms/kernel-sign.sh. It handles modules compressed with zstd, xz and gzip and depends on 
 python-zstandard package to help with those compressed with zstd. 
 
 install-certs.py
-----------------
+================
 
 is called from the package_headers() function of PKGBUILD to install the signing keys. 
 Example is given below. 
@@ -238,7 +234,7 @@ Example is given below.
 These files are all provided.
 
 dkms support
-------------
+================
 
 **Important**
 
@@ -275,9 +271,9 @@ For example:
 
 The link creation can easily be added to an arch package to simplify further if desired.
 
-***************
+###############
 Modify PKGBUILD 
-***************
+###############
 
 What to change
 ==============
@@ -335,9 +331,9 @@ _package-headers()
     rsync -a $dkms_src/{kernel-sign.conf,kernel-sign.sh} $dkms_dst/
     }
 
-**************
+##############
 Required Files
-**************
+##############
 
 This is the list of files referenced above. Remember to make scripts executable.
 
@@ -358,9 +354,9 @@ This is the list of files referenced above. Remember to make scripts executable.
   * certs-local/dkms/kernel-sign.conf
   * certs-local/dkms/kernel-sign.sh
 
-****************
+################
 Arch AUR packags
-****************
+################
 
 AUR Packages
 ============
@@ -384,9 +380,9 @@ For more information see `Arch-SKM-README`_ and example `Arch-SKM-PKGBUIILD`_
 .. _`Arch-SKM-README`:  https://github.com/itoffshore/Arch-SKM/blob/master/README.scripts.md
 .. _`Arch-SKM-PKGBUIILD`: https://github.com/itoffshore/Arch-SKM/blob/master/Arch-Linux-PKGBUILD-example
 
-*******
+#######
 License
-*******
+#######
 
 Created by Gene C. and licensed under the terms of the MIT license.
 
