@@ -1,13 +1,17 @@
 Changelog
 =========
 
+[3.0.1] ----- 2023-11-05
+ * fix readme.rst  
+ * update Docs/Changelog.rst Docs/kernel-sign.pdf  
+
 [3.0.0] ----- 2023-11-05
  * * key and hash types are now read from the kernel config file. Keeps everything consistent.  
  * * Code re-org with supporing modules now moved to lib/xxx.py  
  * * Confirm code works with hash type *sha3-512* introduced in kernel 6.7  
  * Requires openssl 3.2+ / kernel 6.7+  
 
-[2.6.1, origin/master] ----- 2023-10-04
+[2.6.1] ----- 2023-10-04
  * update Docs/Changelog.rst  
  * Fix from Author: Expertcoderz <expertcoderzx@gmail.com>  
  * Merge: 38d25c5705 55f6e37101  
