@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2020-2023 Gene C
+# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
 """
 genkeys module
 """

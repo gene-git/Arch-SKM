@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # SPDX-License-Identifier: MIT
-# Copyright (c) 2020-2023 Gene C
+# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
 """
  Create new pub/priv key pair for signing out of tree kernel modules.
  This program must reside in the certs-local dir but can be run from any directory.
@@ -26,14 +26,12 @@
 Gene 2022-04-30
 """
 
-#import pdb
 from lib import GenKeys
 
 def main():
     """
     # genkeys - makes out-of-tree kernel module signing keys
     """
-    #pdb.set_trace()
     genkeys = GenKeys()
     if not genkeys.okay:
         print ('Problem initializing')

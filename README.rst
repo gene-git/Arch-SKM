@@ -11,6 +11,8 @@ This provides the tools needed to build a kernel with support for signed modules
 Latest Changes
 --------------
 
+ * All git tags are signed with arch@sapience.com key which is available via WKD
+   or download from https://www.sapience.com/tech.
  * key and hash types are now read from the kernel config file. Keeps everything consistent.
  * Code re-org with supporing modules now moved to lib/xxx.py
  * Code works with hash type sha3-xxx (e.g. *sha3-512*) available in kernel 6.7 and openssl 3.2 or later.
