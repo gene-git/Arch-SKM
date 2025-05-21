@@ -7,15 +7,17 @@ import os
 import datetime
 import re
 
+from ._genkeys_base import GenKeysBase
 from .utils import date_time_now
 from .utils import open_file
 
-def _read_current_khash(genkeys):
+
+def _read_current_khash(cert_dir: str) -> str:
     """
     Read existing khash
     """
-    khash = None
-    khash_path = os.path.join(genkeys.cert_dir, 'current', 'khash')
+    khash = ''
+    khash_path = os.path.join(cert_dir, 'current', 'khash')
     fob = open_file(khash_path, 'r')
     if fob:
         khash = fob.read()
@@ -23,7 +25,8 @@ def _read_current_khash(genkeys):
         khash = khash.strip()
     return khash
 
-def refresh_needed(genkeys):
+
+def refresh_needed(genkeys: GenKeysBase):
     """
     check if key refresh is needed
      - if older than refresh time
@@ -31,12 +34,12 @@ def refresh_needed(genkeys):
      Returns:
         True if need refresh
     """
-
     #
     # no refresh time or always refresh
     #
     if not genkeys.refresh:
         return True
+
     if genkeys.refresh.lower() == 'always':
         return True
 
@@ -44,7 +47,7 @@ def refresh_needed(genkeys):
     # kernel hash type mismatch to current hash
     # i.e. check genkeys.khash vs current/khash
     #
-    khash_current = _read_current_khash(genkeys)
+    khash_current = _read_current_khash(genkeys.cert_dir)
     if not khash_current or khash_current != genkeys.khash:
         print('Current hash doesnt match kernel config - updating')
         return True
@@ -56,25 +59,26 @@ def refresh_needed(genkeys):
         freq = int(parse[0])
         units = parse[1]
     else:
-        print ('Failed to parse refresh string')
+        print('Failed to parse refresh string')
         return True
 
     kfile = os.path.join(genkeys.cert_dir, 'current', 'signing_key.pem')
-    if os.path.exists(kfile) :
+
+    if os.path.exists(kfile):
         mod_time = os.path.getmtime(kfile)
         curr_dt = datetime.datetime.fromtimestamp(mod_time)
 
         match units[0]:
             case 's':
-                timedelta_opts = {'seconds' : freq}
+                timedelta_opts = {'seconds': freq}
             case 'm':
-                timedelta_opts = {'minutes' : freq}
+                timedelta_opts = {'minutes': freq}
             case 'h':
-                timedelta_opts = {'hours' : freq}
+                timedelta_opts = {'hours': freq}
             case 'd':
-                timedelta_opts = {'days' : freq}
+                timedelta_opts = {'days': freq}
             case 'w':
-                timedelta_opts = {'weeks' : freq}
+                timedelta_opts = {'weeks': freq}
 
         next_dt = curr_dt + datetime.timedelta(**timedelta_opts)
         now = date_time_now()

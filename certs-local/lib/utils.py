@@ -3,75 +3,80 @@
 """
 # Support module for kernel signing tools
 """
-# Gene 2022-04-31
-#
+from typing import (IO, List, Tuple)
 import os
 import subprocess
-import datetime
+from subprocess import SubprocessError
+from datetime import datetime
 import glob
 
-#------------------------------------------------------------------------
-# Runs external program (no shell)
-#
-def run_prog (pargs):
+
+def run_prog(pargs) -> Tuple[int, str, str]:
     """
-     Runs executable program with arguments.
-     Returns status along with stdout and stderr
+    Runs executable program with arguments and no shell.
+    N
+    Returns status along with stdout and stderr
     """
-    ret = subprocess.run(pargs, stdout = subprocess.PIPE, stderr = subprocess.PIPE, check=False)
+    if not pargs:
+        return (0, '', 'Missing pargs')
+
+    try:
+        ret = subprocess.run(pargs,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             check=False)
+    except (FileNotFoundError, SubprocessError) as err:
+        return (-1, '', str(err))
+
     retc = ret.returncode
-    output = None
-    errors = None
-    if ret.stdout :
-        output = str(ret.stdout, 'utf-8',errors='ignore')
-    if ret.stderr :
-        errors = str(ret.stderr, 'utf-8',errors='ignore')
+    output = ''
+    errors = ''
 
-    return [retc, output, errors]
+    if ret.stdout:
+        output = str(ret.stdout, 'utf-8', errors='ignore')
 
-#------------------------------------------------------------------------
-# Current date time
-#
-def date_time_now() :
+    if ret.stderr:
+        errors = str(ret.stderr, 'utf-8', errors='ignore')
+
+    return (retc, output, errors)
+
+
+def date_time_now() -> datetime:
     """
-     Return current datetime
+    Return current datetime
     """
-    today = datetime.datetime.today()
+    today = datetime.today()
     return today
 
-#------------------------------------------------------------------------
-# shell glob a file list
-#
-def file_list_glob(pathname) :
+
+def file_list_glob(pathname: str) -> List[str]:
     """
-     Return list of files match glob path
+    Return list of files match glob path
     """
     flist = glob.glob(pathname, recursive=False)
     return flist
 
-# ------------------------------------------------------
-# unlink/remove file (not directory)
-#
-def remove_file(fpath):
+
+def remove_file(fpath: str) -> bool:
     """
-     Remove a file (not a dir.
+    Remove a file (not a dir).
     """
-    okay = True
     if os.path.exists(fpath):
         try:
             os.unlink(fpath)
-            return okay
+            return True
         except OSError as err:
-            print(f'Failed to remove file : {fpath} Error : {err}')
-            return not okay
-    return okay
+            print(f'Failed to remove file: {fpath} Error: {err}')
+            return False
+    return True
 
-def open_file(path, mode):
+
+def open_file(path: str, mode: str) -> IO | None:
     """
     open a file handlilng any exceptions
     Returns file object
     """
-    # pylint: disable=W1514,R1732
+    # pylint: disable=unspecified-encoding,consider-using-with
     try:
         if 'b' in mode:
             fobj = open(path, mode)
@@ -79,7 +84,7 @@ def open_file(path, mode):
             fobj = open(path, mode, encoding='utf-8')
 
     except OSError as err:
-        print(f'Error opening {path} : {err}')
+        print(f'Error opening {path}: {err}')
         fobj = None
 
     return fobj

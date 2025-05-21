@@ -2,21 +2,24 @@
 # SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
 """
  Update kernel config(s)
- Gene 2022-04-30
 """
+from typing import (List)
 import os
 import uuid
 
+from ._genkeys_base import GenKeysBase
 from .utils import open_file
 
-def _save_config(new_config_rows, conf_temp, conf, verb):
+
+def _save_config(new_config_rows: List[str], conf_temp: str,
+                 conf: str, verb: bool) -> bool:
     """
     Write the udpated config
      - first update temp then rename
     """
     new_config = ''.join(new_config_rows)
     if verb:
-        print (f'Updating config: {conf}')
+        print(f'Updating config: {conf}')
 
     fobj = open_file(conf_temp, 'w')
     if fobj:
@@ -24,16 +27,18 @@ def _save_config(new_config_rows, conf_temp, conf, verb):
         fobj.close()
         os.rename(conf_temp, conf)
     else:
-        print (f'Failed to write : {conf_temp}')
+        print(f'Failed to write: {conf_temp}')
         return False
     return True
 
-def _update_one_config(genkeys, kconfig_path, signing_key):
+
+def _update_one_config(genkeys: GenKeysBase, kconfig_path: str,
+                       signing_key: str) -> bool:
     """
-    update a kernel config
+    update one kernel config
     """
     #
-    # always make temp in same dir to avoid rename across file systems
+    # Make temp file in same dir to avoid rename across file systems
     #
     kconfig_dir = os.path.dirname(kconfig_path)
     kconfig_name_temp = str(uuid.uuid4())
@@ -47,7 +52,7 @@ def _update_one_config(genkeys, kconfig_path, signing_key):
         kconfig_rows = fobj.readlines()
         fobj.close()
     else:
-        print (f'Failed to open : {kconfig_path}')
+        print(f'Failed to open: {kconfig_path}')
         return False
 
     changed = True
@@ -65,29 +70,32 @@ def _update_one_config(genkeys, kconfig_path, signing_key):
             config_rows.append(row)
 
     if changed:
-        if not _save_config(config_rows, kconfig_path_temp, kconfig_path, genkeys.verb):
+        if not _save_config(config_rows, kconfig_path_temp,
+                            kconfig_path, genkeys.verb):
             return False
-    else :
+    else:
         if genkeys.verb:
-            print ('config up to date')
+            print('config up to date')
 
     return True
 
-def update_configs(genkeys):
+
+def update_configs(genkeys: GenKeysBase) -> bool:
     """
     Update configs with new keys if needed
-    Safest is to always read the current link and check config regardless if key was refreshed.
+    Safest is to always read the current link and check config
+    regardless if key was refreshed.
     """
+    #
+    # Confirm path to actual directory and not the link
+    # name which doesn't change
+    #
     all_ok = True
-
-    #
-    # Confirm path to actual directory and not the link name which doesn't change
-    #
-    keydir = None
+    keydir = ''
     keyname = 'signing_key.pem'
     keycur = os.path.join(genkeys.cert_dir, 'current')
 
-    if os.path.islink(keycur) :
+    if os.path.islink(keycur):
         keydir = os.readlink(keycur)
         keydir = os.path.join(genkeys.cert_dir, keydir)
         keydir = os.path.abspath(keydir)
@@ -95,18 +103,18 @@ def update_configs(genkeys):
 
         if not os.path.exists(signing_key):
             print(f'Failed to find signing key: {signing_key}')
-            return not all_ok
+            return False
         #
         # format to match RHS of kernel config file
         #
         signing_key = '"' + signing_key + '"\n'
     else:
-        print (f'Missing : {keycur}')
-        return not all_ok
+        print(f'Missing: {keycur}')
+        return False
 
     for kconfig in genkeys.kconfig_list:
         kconfig_path = os.path.abspath(kconfig)
         okay = _update_one_config(genkeys, kconfig_path, signing_key)
-        all_ok = all_ok | okay
+        all_ok &= okay
 
     return all_ok

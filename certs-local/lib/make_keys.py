@@ -1,66 +1,88 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
 """
- Main class for genkeys
- Gene 2022-04-30
+Generate any neeed keys.
 """
 import os
+from dataclasses import dataclass
 import stat
 import uuid
 
+from ._genkeys_base import GenKeysBase
 from .utils import open_file
 from .utils import run_prog
 from .utils import date_time_now
 
 
-def _create_new_keys(genkeys, kvalid, kx509, kprv, kkey, kcrt):
+@dataclass
+class KeyInfo:
+    """ key information """
+    kvalid: str
+    kx509: str
+    kprv: str
+    kkey: str
+    kcrt: str
+    khash: str
+    ktype: str
+
+
+def _create_new_keys(keyinfo: KeyInfo, verb: bool) -> bool:
     """
     Make the actual keys - rsa or ec using openssl
-     - 
     """
     # pylint: disable=R0913
     okay = True
 
+    kvalid = keyinfo.kvalid
+    kx509 = keyinfo.kx509
+    kprv = keyinfo.kprv
+    kkey = keyinfo.kkey
+    kcrt = keyinfo.kcrt
+
+    khash = keyinfo.khash
+    ktype = keyinfo.ktype
+
     # new key
-    cmd = f'/usr/bin/openssl req -new -nodes -utf8 -{genkeys.khash} -days {kvalid}'
+    cmd = f'/usr/bin/openssl req -new -nodes -utf8 -{khash} -days {kvalid}'
     cmd = cmd + f' -batch -x509 -config {kx509}'
     cmd = cmd + f' -outform PEM -out {kkey} -keyout {kkey}'
 
-    if genkeys.ktype == 'ec':
+    if ktype == 'ec':
         cmd = cmd + ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
 
     pargs = cmd.split()
-    [retc, _stdout, stderr] = run_prog(pargs)
+    (retc, _stdout, stderr) = run_prog(pargs)
     if retc != 0:
         print('Error making new key')
-        if genkeys.verb and stderr:
+        if verb and stderr:
             print(stderr)
         return not okay
 
-    os.chmod (kkey, stat.S_IREAD|stat.S_IWRITE)
+    os.chmod(kkey, stat.S_IREAD | stat.S_IWRITE)
 
     # extract private key
     cmd = f'/usr/bin/openssl pkey -in {kkey} -out {kprv}'
     pargs = cmd.split()
-    [retc, _stdout, stderr] = run_prog(pargs)
+    (retc, _stdout, stderr) = run_prog(pargs)
     if retc != 0:
         print('Error making prv key')
-        if genkeys.verb and stderr:
+        if verb and stderr:
             print(stderr)
         return not okay
 
     # Extract certificate (public) part
     cmd = f'/usr/bin/openssl x509 -outform der -in {kkey} -out {kcrt}'
     pargs = cmd.split()
-    [retc, _stdout, stderr] = run_prog(pargs)
+    (retc, _stdout, stderr) = run_prog(pargs)
     if retc != 0:
         print('Error making crt')
-        if genkeys.verb and stderr:
+        if verb and stderr:
             print(stderr)
         return not okay
     return okay
 
-def make_new_keys(genkeys):
+
+def make_new_keys(genkeys: GenKeysBase):
     """
     Set up before we use openssl to create_new_keys()
     Output:
@@ -70,7 +92,7 @@ def make_new_keys(genkeys):
     """
     # pylint: disable=R0914
     if genkeys.verb:
-        print ('Making new keys ')
+        print('Making new keys ')
 
     now = date_time_now()
     now_str = now.strftime('%Y%m%d-%H%M')
@@ -79,38 +101,42 @@ def make_new_keys(genkeys):
     os.makedirs(kdir, exist_ok=True)
 
     kvalid = '36500'
-    kx509 =  os.path.join(genkeys.cert_dir, 'x509.oot.genkey')
+    kx509 = os.path.join(genkeys.cert_dir, 'x509.oot.genkey')
     kbasename = 'signing'
     kprv = os.path.join(kdir, kbasename + '_prv.pem')
     kkey = os.path.join(kdir, kbasename + '_key.pem')
     kcrt = os.path.join(kdir, kbasename + '_crt.crt')
 
+    khash = genkeys.khash
+    ktype = genkeys.ktype
+
+    keyinfo = KeyInfo(kvalid, kx509, kprv, kkey, kcrt, khash, ktype)
+
+    if not _create_new_keys(keyinfo, genkeys.verb):
+        return False
+
     khash_file = os.path.join(kdir, 'khash')
     ktype_file = os.path.join(kdir, 'ktype')
-
-    okay = _create_new_keys(genkeys, kvalid, kx509, kprv, kkey, kcrt)
-    if not okay:
-        return False
 
     #
     # Put khash and ktype files in key dir.
     # The module signing script will read the hash/ktype
     #
     okay = True
-    fobj = open_file(khash_file,'w')
+    fobj = open_file(khash_file, 'w')
     if fobj:
         fobj.write(genkeys.khash + '\n')
         fobj.close()
     else:
-        print (f'Failed to write : {khash_file}')
+        print(f'Failed to write: {khash_file}')
         okay = False
 
-    fobj = open_file(ktype_file,'w')
+    fobj = open_file(ktype_file, 'w')
     if fobj:
         fobj.write(genkeys.ktype + '\n')
         fobj.close()
     else:
-        print (f'Failed to write : {ktype_file}')
+        print(f'Failed to write: {ktype_file}')
         okay = False
 
     #

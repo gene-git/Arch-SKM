@@ -2,16 +2,18 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
 """
- Create new pub/priv key pair for signing out of tree kernel modules.
- This program must reside in the certs-local dir but can be run from any directory.
- It will use it's own path to locate the cert-local dir
+Create new pub/priv key pair for signing out of tree kernel modules.
 
- Each key pair is stored by date-time
+This program must reside in the certs-local dir but
+can be run from any directory.
+It will use it's own path to locate the cert-local dir
 
- Args:
+Each key pair is stored by date-time
+
+Args:
   refresh  - time before new keys are created. e.g. --refresh 24h
-             default is 7days. Units may be abbreviateed and one of secs, mins, hours,
-             days or weeks
+             default is 7days. Units may be abbreviateed using
+             one of secs, mins, hours, days or weeks
   khash    - sets hash (default is sha512)
   ktype    - rsa or ec (default is ec)
   config   - config file to update with signing key. May contain wildcard
@@ -19,36 +21,38 @@
                   --config ../configs/config.*
 
  NB:
-   We always check the config - even if not refreshing keys to be sure it has the
-   current signing key.
+   We always check the config - even if not refreshing keys to
+   be sure it has the current signing key.
 
   Default refresh key is 7 days
-Gene 2022-04-30
 """
-
 from lib import GenKeys
+
 
 def main():
     """
-    # genkeys - makes out-of-tree kernel module signing keys
+    genkeys - makes out-of-tree kernel module signing keys
     """
     genkeys = GenKeys()
     if not genkeys.okay:
-        print ('Problem initializing')
+        print('Problem initializing')
         return 0
 
-    if genkeys.refresh_needed() :
+    if genkeys.refresh_needed():
         genkeys.make_new_keys()
 
     elif genkeys.verb:
-        print ('Key refresh not needed yet')
+        print('Key refresh not needed yet')
 
     # always update to be sure config has key even if no refresh
     genkeys.update_configs()
+    if genkeys.okay:
+        print('Success: all done')
+    else:
+        print('Error generating keys')
 
     return 0
 
-# ----------------------------
+
 if __name__ == '__main__':
     main()
-# ----------------------------

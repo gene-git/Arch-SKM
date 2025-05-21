@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+mypy --check-untyped-defs test_keys.py

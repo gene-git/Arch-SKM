@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+#
+/usr/bin/rm -rf ./certs-local ./config ./modules ./scripts

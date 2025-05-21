@@ -1,0 +1,39 @@
+-------------------------------------------------------
+ Changelog    : arch-skm
+ Tags         : 2.6.0 ➙ HEAD
+              : 2023-09-27 ➙ 2024-12-31
+              : 6 tags. See Docs for full changelog
+-------------------------------------------------------
+
+ 2024-12-31   : HEAD
+                update Docs/Changelog.rst Docs/kernel-sign.pdf
+
+ 2024-12-31   : 3.0.2
+                Git tags are now signed.
+                Update SPDX tags
+ 2023-11-05     update Docs/Changelog.rst Docs/kernel-sign.pdf
+
+ 2023-11-05   : 3.0.1
+                fix readme.rst
+                update Docs/Changelog.rst Docs/kernel-sign.pdf
+
+ 2023-11-05   : 3.0.0
+                     * key and hash types are now read from the kernel config file. Keeps
+                     everything consistent.
+                     * Code re-org with supporing modules now moved to lib/xxx.py
+                     * Confirm code works with hash type *sha3-512* introduced in kernel 6.7
+                       Requires openssl 3.2+ / kernel 6.7+
+
+ 2023-10-04   : 2.6.1
+                update Docs/Changelog.rst
+                Fix from Author: Expertcoderz <expertcoderzx@gmail.com>
+                Merge pull request #8 from Expertcoderz/patch-1
+                Fix -v argument help text f-string
+                Fix -v argument help text f-string
+ 2023-09-27     update Docs/Changelog.rst
+
+ 2023-09-27   : 2.6.0
+                Reorganize documrnts under Docs.
+                Migrate to restructured text
+                Now easy to build html and pdf docs using sphinx
+ 2023-03-31     update CHANGELOG.md

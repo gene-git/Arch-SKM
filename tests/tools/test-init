@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+#
+# Create clean test setup
+#
+
+rsync -a ../certs-local ./
+rsync -a ./tools/config-sample ./config
+rsync -a ./tools/modules ./
+
+
+# get kernel sign tool
+signers=($(/usr/bin/ls -1 /usr/lib/modules/*/build/scripts/sign-file 2>/dev/null))
+signer=''
+if [ "$signers" != "" ] ; then
+    signer=${signers[0]}
+else
+    echo "Failed to find kernel module sign_file"
+    exit 2
+fi
+mkdir -p ./scripts
+rsync -a $signer ./scripts/
+
+
+
