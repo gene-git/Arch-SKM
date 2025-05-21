@@ -7,18 +7,24 @@ Tags
 
 ::
 
-	0.1.0 (2019-11-10) -> HEAD (2024-12-31)
-	103 commits.
+	0.1.0 (2019-11-10) -> 4.0.0 (2025-05-21)
+	104 commits.
 
 Commits
 =======
 
 
-* 2024-12-31  : **HEAD**
+* 2025-05-21  : **4.0.0**
 
 ::
 
-                update Docs/Changelog.rst Docs/kernel-sign.pdf
+                Tidy and Improve code:
+                  PEP-8, PEP-257, PEP-484 PEP-561
+                  Refactor
+                Add tests : run pytest in the *tests* directory.
+                  This will locate and use a kernel provided tool:
+                  /usr/lib/modules/xxx/build/scripts/sign-file
+ 2024-12-31     update Docs/Changelog.rst Docs/kernel-sign.pdf
 
 * 2024-12-31  : **3.0.2**
 

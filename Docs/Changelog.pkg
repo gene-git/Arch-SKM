@@ -1,12 +1,18 @@
 -------------------------------------------------------
  Changelog    : arch-skm
- Tags         : 2.6.0 ➙ HEAD
-              : 2023-09-27 ➙ 2024-12-31
+ Tags         : 2.6.1 ➙ 4.0.0
+              : 2023-10-04 ➙ 2025-05-21
               : 6 tags. See Docs for full changelog
 -------------------------------------------------------
 
- 2024-12-31   : HEAD
-                update Docs/Changelog.rst Docs/kernel-sign.pdf
+ 2025-05-21   : 4.0.0
+                Tidy and Improve code:
+                  PEP-8, PEP-257, PEP-484 PEP-561
+                  Refactor
+                Add tests : run pytest in the *tests* directory.
+                  This will locate and use a kernel provided tool:
+                  /usr/lib/modules/xxx/build/scripts/sign-file
+ 2024-12-31     update Docs/Changelog.rst Docs/kernel-sign.pdf
 
  2024-12-31   : 3.0.2
                 Git tags are now signed.
@@ -31,9 +37,3 @@
                 Fix -v argument help text f-string
                 Fix -v argument help text f-string
  2023-09-27     update Docs/Changelog.rst
-
- 2023-09-27   : 2.6.0
-                Reorganize documrnts under Docs.
-                Migrate to restructured text
-                Now easy to build html and pdf docs using sphinx
- 2023-03-31     update CHANGELOG.md
