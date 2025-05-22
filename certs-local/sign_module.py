@@ -55,20 +55,19 @@ this might cause problem for kernel sig check or not.
 So we strip it out. This also removes any debug symbols
 so it has a downside if the module had any debug info.
 """
-from typing import (List)
 import os
 import sys
 
 from lib import (ModuleTool, KernelModSigner)
 
 
-def modules_from_dir(mdir: str) -> List[str]:
+def modules_from_dir(mdir: str) -> list[str]:
     """
     Get a list of kernel modules from a directory
 
     Returns list of (recognizable) modules located in a directory
     """
-    mod_list: List[str] = []
+    mod_list: list[str] = []
 
     #
     # Includes modules with known compressed extensions

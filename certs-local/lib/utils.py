@@ -3,7 +3,7 @@
 """
 # Support module for kernel signing tools
 """
-from typing import (IO, List, Tuple)
+from typing import IO
 import os
 import subprocess
 from subprocess import SubprocessError
@@ -11,7 +11,7 @@ from datetime import datetime
 import glob
 
 
-def run_prog(pargs) -> Tuple[int, str, str]:
+def run_prog(pargs) -> tuple[int, str, str]:
     """
     Runs executable program with arguments and no shell.
     N
@@ -49,7 +49,7 @@ def date_time_now() -> datetime:
     return today
 
 
-def file_list_glob(pathname: str) -> List[str]:
+def file_list_glob(pathname: str) -> list[str]:
     """
     Return list of files match glob path
     """

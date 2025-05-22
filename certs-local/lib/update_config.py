@@ -3,7 +3,6 @@
 """
  Update kernel config(s)
 """
-from typing import (List)
 import os
 import uuid
 
@@ -11,7 +10,7 @@ from ._genkeys_base import GenKeysBase
 from .utils import open_file
 
 
-def _save_config(new_config_rows: List[str], conf_temp: str,
+def _save_config(new_config_rows: list[str], conf_temp: str,
                  conf: str, verb: bool) -> bool:
     """
     Write the udpated config

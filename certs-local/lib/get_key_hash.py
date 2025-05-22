@@ -3,13 +3,12 @@
 """
  Extract kernel config signing key / hash
 """
-from typing import (List, Tuple)
 
 from .utils import open_file
 
 
-def get_key_hash_types(kconfig_list: List[str]
-                       ) -> Tuple[bool, str, str]:
+def get_key_hash_types(kconfig_list: list[str]
+                       ) -> tuple[bool, str, str]:
     """
     Read kernel config to determine:
 
@@ -17,11 +16,11 @@ def get_key_hash_types(kconfig_list: List[str]
      - module hash type
 
     Args:
-        kconfig_list (List[str]):
+        kconfig_list (list[str]):
         List of kernel config files.
 
     Returns:
-        Tuple[okay: bool, key_type: str, hash_type: str]:
+        tuple[okay: bool, key_type: str, hash_type: str]:
         Okay is True when key and hash types are found.
 
     """
@@ -66,7 +65,7 @@ def get_key_hash_types(kconfig_list: List[str]
     return (all_okay, key_type, hash_type)
 
 
-def _parse_config_file(kconfig: str) -> Tuple[bool, str, str]:
+def _parse_config_file(kconfig: str) -> tuple[bool, str, str]:
     """
     Read one kernel config to determine:
 
@@ -78,7 +77,7 @@ def _parse_config_file(kconfig: str) -> Tuple[bool, str, str]:
         A kernel config files.
 
     Returns:
-        Tuple[okay: bool, key_type: str, hash_type: str]:
+        tuple[okay: bool, key_type: str, hash_type: str]:
         Okay is True when key and hash types are found.
 
     """
@@ -136,7 +135,7 @@ def _parse_config_file(kconfig: str) -> Tuple[bool, str, str]:
     return (all_okay, key_type, hash_type)
 
 
-def _parse_one(line: str) -> Tuple[bool, str, str]:
+def _parse_one(line: str) -> tuple[bool, str, str]:
     """
     Parse one config line for key / hash type
     """
@@ -157,7 +156,7 @@ def _parse_one(line: str) -> Tuple[bool, str, str]:
     return (all_okay, key_type, hash_type)
 
 
-def _config_to_key_type(config_line: str) -> Tuple[bool, str]:
+def _config_to_key_type(config_line: str) -> tuple[bool, str]:
     """
     Identify key type from kernel config row
     with "CONFIG_MODULE_SIG_KEY_TYPE_"
@@ -181,7 +180,7 @@ def _config_to_key_type(config_line: str) -> Tuple[bool, str]:
     return (True, ktype)
 
 
-def _config_to_hash_type(config_line: str) -> Tuple[bool, str]:
+def _config_to_hash_type(config_line: str) -> tuple[bool, str]:
     """
     Identify hash type from kernel config row
     with "CONFIG_MODULE_SIG_HASH"

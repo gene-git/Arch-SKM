@@ -5,7 +5,7 @@
 """
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=too-few-public-methods
-from typing import (Any, Dict, List, Tuple)
+from typing import (Any)
 import os
 import sys
 import argparse
@@ -14,7 +14,7 @@ from .utils import file_list_glob
 
 from .get_key_hash import get_key_hash_types
 
-type _Opt = Tuple[str | Tuple[str, str] | Tuple[str, str, str], Dict[str, Any]]
+type _Opt = tuple[str | tuple[str, str] | tuple[str, str, str], dict[str, Any]]
 
 
 class GenKeysBase:
@@ -38,7 +38,7 @@ class GenKeysBase:
         self.refresh = '7d'
         self.khash = 'sha512'
         self.ktype = 'ec'
-        self.kconfig_list: List[str] = []
+        self.kconfig_list: list[str] = []
         self.okay = True
 
         #
@@ -96,7 +96,7 @@ def _parse_args(genkeys: GenKeysBase):
         genkeys.okay = False
 
 
-def _avail_options(refresh: str, conf: str) -> List[_Opt]:
+def _avail_options(refresh: str, conf: str) -> list[_Opt]:
     """
     List of command line options.
 
@@ -107,7 +107,7 @@ def _avail_options(refresh: str, conf: str) -> List[_Opt]:
         conf (str):
         Kernel config file.
     """
-    opts: List[_Opt] = []
+    opts: list[_Opt] = []
 
     opts.append((('-r',  '--refresh'),
                  {'default': refresh,
