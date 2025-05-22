@@ -1,11 +1,12 @@
 -------------------------------------------------------
  Changelog    : arch-skm
- Tags         : 3.0.0 ➙ 4.1.0, origin/master
+ Tags         : 3.0.0 ➙ 4.1.0
               : 2023-11-05 ➙ 2025-05-21
               : 6 tags. See Docs for full changelog
 -------------------------------------------------------
 
- 2025-05-21   : 4.1.0, origin/master
+ 2025-05-21   : 4.1.0
+                Use builtin types where possible. e.g. typing.List -> list
                 update Docs/Changelogs Docs/kernel-sign.pdf
 
  2025-05-21   : 4.0.0
