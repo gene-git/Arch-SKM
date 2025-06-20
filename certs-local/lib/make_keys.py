@@ -9,8 +9,8 @@ import stat
 import uuid
 
 from ._genkeys_base import GenKeysBase
+from .run_prog import run_prog
 from .utils import open_file
-from .utils import run_prog
 from .utils import date_time_now
 
 

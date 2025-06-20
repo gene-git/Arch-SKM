@@ -5,4 +5,4 @@ genkeys module
 """
 from .class_genkeys import GenKeys
 from .signer_class import (KernelModSigner, ModuleTool)
-from .utils import run_prog
+from .run_prog import run_prog

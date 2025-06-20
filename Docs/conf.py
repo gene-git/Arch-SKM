@@ -9,7 +9,7 @@
 project = "kernel-sign"
 copyright = '2023, Gene C'
 author = 'Gene C'
-release = '4.1.0'
+release = '4.2.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

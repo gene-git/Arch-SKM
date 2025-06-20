@@ -5,40 +5,8 @@
 """
 from typing import IO
 import os
-import subprocess
-from subprocess import SubprocessError
 from datetime import datetime
 import glob
-
-
-def run_prog(pargs) -> tuple[int, str, str]:
-    """
-    Runs executable program with arguments and no shell.
-    N
-    Returns status along with stdout and stderr
-    """
-    if not pargs:
-        return (0, '', 'Missing pargs')
-
-    try:
-        ret = subprocess.run(pargs,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE,
-                             check=False)
-    except (FileNotFoundError, SubprocessError) as err:
-        return (-1, '', str(err))
-
-    retc = ret.returncode
-    output = ''
-    errors = ''
-
-    if ret.stdout:
-        output = str(ret.stdout, 'utf-8', errors='ignore')
-
-    if ret.stderr:
-        errors = str(ret.stderr, 'utf-8', errors='ignore')
-
-    return (retc, output, errors)
 
 
 def date_time_now() -> datetime:
