@@ -1,0 +1,31 @@
+-------------------------------------------------------
+ Changelog    : arch-skm
+ Tags         : 4.0.0 ➙ 4.4.0
+              : 2025-05-21 ➙ 2025-06-26
+              : 6 tags. See Docs for full changelog
+-------------------------------------------------------
+
+ 2025-06-26   : 4.4.0
+                If pyconcurrent module available use its run_prog() else use local copy.
+ 2025-06-22     update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-06-22   : 4.3.0
+                run_prog: sync with latest from pyconcurrent
+ 2025-06-20     update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-06-20   : 4.2.0
+                Pull local copy of latest run_prog from pyconcurrent
+ 2025-05-21     update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-05-21   : 4.1.0
+                Use builtin types where possible. e.g. typing.List -> list
+                update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-05-21   : 4.0.0
+                Tidy and Improve code:
+                  PEP-8, PEP-257, PEP-484 PEP-561
+                  Refactor
+                Add tests : run pytest in the *tests* directory.
+                  This will locate and use a kernel provided tool:
+                  /usr/lib/modules/xxx/build/scripts/sign-file
+ 2024-12-31     update Docs/Changelog.rst Docs/kernel-sign.pdf
