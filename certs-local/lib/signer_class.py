@@ -57,7 +57,7 @@ import lzma
 import gzip
 import zstandard
 
-from .run_prog import run_prog
+from .run_prog_local import run_prog
 from .utils import open_file, remove_file
 
 

@@ -299,6 +299,7 @@ def _check_for_data(pwi: _ProcWaitInfo, timeout: int) -> tuple[bool, str, str]:
     errors: str = ''
 
     try:
+        pwi.update_select_iolists()
         ready = select(pwi.readlist, pwi.writelist, pwi.exceplist, timeout)
         read_ready = ready[0]
         write_ready = ready[1]

@@ -14,6 +14,7 @@ This provides the tools needed to build a kernel with support for signed modules
 Latest Changes
 --------------
 
+ * If pyconcurrent module available use it's run_prog() else use local copy.
  * Tidy and Improve code:
 
     * PEP-8, PEP-257, PEP-484 PEP-561
