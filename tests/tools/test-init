@@ -4,7 +4,8 @@
 #
 
 rsync -a ../certs-local ./
-rsync -a ./tools/config-sample ./config
+rsync -a ./tools/config-ec ./
+rsync -a ./tools/config-ml-dsa ./
 rsync -a ./tools/modules ./
 
 

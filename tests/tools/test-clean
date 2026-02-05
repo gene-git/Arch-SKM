@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 #
-/usr/bin/rm -rf ./certs-local ./config ./modules ./scripts
+/usr/bin/rm -rf ./certs-local ./config ./config-ec ./config-ml-dsa ./modules ./scripts

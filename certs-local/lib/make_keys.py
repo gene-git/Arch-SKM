@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: © 2020-present Gene C <arch@sapience.com>
 """
 Generate any neeed keys.
 """
@@ -44,11 +44,16 @@ def _create_new_keys(keyinfo: KeyInfo, verb: bool) -> bool:
 
     # new key
     cmd = f'/usr/bin/openssl req -new -nodes -utf8 -{khash} -days {kvalid}'
-    cmd = cmd + f' -batch -x509 -config {kx509}'
-    cmd = cmd + f' -outform PEM -out {kkey} -keyout {kkey}'
+    cmd += f' -batch -x509 -config {kx509}'
+    cmd += f' -outform PEM -out {kkey} -keyout {kkey}'
 
     if ktype == 'ec':
-        cmd = cmd + ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
+        # elliptic curve
+        cmd += ' -newkey ec -pkeyopt ec_paramgen_curve:secp384r1'
+
+    elif ktype.startswith('ml-dsa'):
+        # ml-dsa-44, ml-dsa-65, ml-dsa-87
+        cmd += f' -newkey {ktype}'
 
     pargs = cmd.split()
     (retc, _stdout, stderr) = run_prog(pargs)

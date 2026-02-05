@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: © 2020-present Gene C <arch@sapience.com>
 """
  Extract kernel config signing key / hash
 """
@@ -172,6 +172,15 @@ def _config_to_key_type(config_line: str) -> tuple[bool, str]:
 
     elif name.endswith('ECDSA'):
         ktype = 'ec'
+
+    elif name.endswith('MLDSA_44'):
+        ktype = 'ml-dsa-44'
+
+    elif name.endswith('MLDSA_65'):
+        ktype = 'ml-dsa-65'
+
+    elif name.endswith('MLDSA_87'):
+        ktype = 'ml-dsa-87'
 
     else:
         print(f'Unknown kernel config {config_line}')

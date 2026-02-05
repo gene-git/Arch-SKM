@@ -6,40 +6,54 @@ Overview
 ========
 
 Signed kernel modules provide a mechanism for the kernel to verify the integrity of a module.
-This provides the tools needed to build a kernel with support for signed modules.
+This package provides the tools needed to build a kernel supporting signed 
+*out of tree* (OOT) modules. An OOT module is any kernel module that is not 
+part of the upstream Linux kernel itself.
 
- * All git tags are signed with arch@sapience.com key which is available via WKD
-   or download from https://www.sapience.com/tech.
+All git tags are signed with arch@sapience.com key which is available via WKD
+or download from https://www.sapience.com/tech.
 
 Latest Changes
 --------------
 
- * If pyconcurrent module available use it's run_prog() else use local copy.
- * Tidy and Improve code:
+**Version 5.0**
 
-    * PEP-8, PEP-257, PEP-484 PEP-561
-    * Refactor
+* Preliminary support for **ml-dsa-44**, **ml-dsa-65** and **ml-dsa-87**
 
- * Add tests : run pytest in the *tests* directory.
-   
-   This will locate and use a kernel provided tool:
-   /usr/lib/modules/xxx/build/scripts/sign-file
+  These are the NIST approved post quantum compiting algorithms.
 
- * key and hash types are now read from the kernel config file. Keeps everything consistent.
- * Code re-org with supporing modules now moved to lib/xxx.py
- * Code works with hash type sha3-xxx (e.g. *sha3-512*) available in kernel 6.7 and openssl 3.2 or later.
+  linux-next (as of 20260205) supports verifying signatures signed using ml-dsa-nn.
+  This version of *kernel-sign* will generate keys for those ml-dsa-nn algorithms 
+  if specified in the kernel config.
+
+  We rely on the signing tool that is provided by the kernel itself to sign 
+  any OOT kernel modules. Therefore, once the kernel tool supports signing
+  with ml-dsa, then we will too.
+
+* Note: A future version may require the *pyconcurrent* module.
+
+  Its a lttle extra maintenance keeping duplicate code. For now,
+  we will use the pyconcurrent module if available otherwise we use a
+  local copy of the part we need.
+
+* License updated to GPL version 2 or later.
+
+* pkg-install script updated.
+
+  byte compile the python code and remove any no-longer needed files.
+
 
 Available 
 =========
 
-Kernel-Sign Github repo:
+The current version of Kernel-Sign is in Github repo:
 
- * `Kernel_Sign`_
+* `Kernel_Sign`_ - includes documentation pdf.
 
-These docs on signed kernel modules:
+Also see:
 
- * `Arch Wiki`_ 
- * `Kernel Docs`_ 
+* `Kernel Docs`_  - upstream kernel documentation on module signing.
+* `Arch Wiki`_  - this may not keep be up to date.
 
 .. _`Kernel_Sign`: https://github.com/gene-git/arch-skm
 .. _`Arch Wiki`: https://wiki.archlinux.org/title/Signed_kernel_modules
@@ -70,7 +84,7 @@ needed using DKMS `DKMS`_
 
 Examples of such packages, provided by Arch, include:
 
-  * Virtual gues modules `virtualbox-guest-modules-arch`_ 
+* Virtual gues modules `virtualbox-guest-modules-arch`_ 
     
 During a standard kernel compilation, the kernel build tools create a private/public key pair and 
 sign every in tree module (using the private key). The public key is saved in the kernel itself. 
@@ -91,17 +105,17 @@ Kernel/Arch Build System `Kernel/Arch Build System`_,
 
 We will adjust the build to:
 
-  * Sign the standard in tree kernel modules
-  * Provide what is needed to have signed out of tree modules and for the kernel to verify those modules.
+* Sign the standard in tree kernel modules
+* Provide what is needed to have signed out of tree modules and for the kernel to verify those modules.
 
 Note: The goal is to have:
 
-  * In tree modules signed during the standard kernel build process.
+* In tree modules signed during the standard kernel build process.
 
-    The standard kernel build creates a fresh public/private key pair on each build.
+  The standard kernel build creates a fresh public/private key pair on each build.
 
-  * Out of tree modules are signed and the associated public key is compiled in to the kernel.
-    We will create a separate public/private key pair on each build.
+* Out of tree modules are signed and the associated public key is compiled in to the kernel.
+  We will create a separate public/private key pair on each build.
 
 Summary of what needs to be done 
 ================================
@@ -133,44 +147,44 @@ In addition the following config options should be set by either manually editin
 the updated *.config* file back to the build file *config*.  
 It is preferable to use elliptic curve type keys and zstd compression. 
 
-  * CONFIG_MODULE_SIG=y
+* CONFIG_MODULE_SIG=y
 
-    Enable Loadable module suppot --->
+  Enable Loadable module suppot --->
 
-    Module Signature Verification ->  activate
+  Module Signature Verification ->  activate
 
-  * CONFIG_MODULE_SIG_FORCE=n
+* CONFIG_MODULE_SIG_FORCE=n
 
-    Require modules to be validly signed -> leave off
+  Require modules to be validly signed -> leave off
 
-    This allows the decision to enforce verified modules only as boot command line.
-    If you are comfortable all is working then by all means change this to 'y'
-    Command line version of this is : module.sig_enforce=1
+  This allows the decision to enforce verified modules only as boot command line.
+  If you are comfortable all is working then by all means change this to 'y'
+  Command line version of this is : module.sig_enforce=1
 
-  * CONFIG_MODULE_SIG_HASH=sha512
+ * CONFIG_MODULE_SIG_HASH=sha512
 
-    Automatically sign all modules  -> activate
-    Which hash algorithm    -> SHA-512
+   Automatically sign all modules  -> activate
+   Which hash algorithm    -> SHA-512
 
-    kernel 6.7 and later support sha3 hashes. The preferred hash choice is then
-    sha3-512. This also requires openssl version 3.2 or newer.
+   kernel 6.7 and later support sha3 hashes. The preferred hash choice is then
+   sha3-512. This also requires openssl version 3.2 or newer.
 
 
-  * CONFIG_MODULE_COMPRESS_ZSTD=y
+ * CONFIG_MODULE_COMPRESS_ZSTD=y
 
-    Compress modules on installation -> activate
-    Compression algorithm (ZSTD)
+   Compress modules on installation -> activate
+   Compression algorithm (ZSTD)
 
-  * CONFIG_MODULE_SIG_KEY_TYPE_ECDSA=y
+ * CONFIG_MODULE_SIG_KEY_TYPE_ECDSA=y
 
-    Cryptographic API --->
-    Certificates for Signature Checking --->
-    Type of module signing key to be generated -> ECDSA
+   Cryptographic API --->
+   Certificates for Signature Checking --->
+   Type of module signing key to be generated -> ECDSA
 
-  * CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
+ * CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
 
-    Enable Loadable module support --->
-    Allow loading of modules with missing namespace imports -> set off 
+   Enable Loadable module support --->
+   Allow loading of modules with missing namespace imports -> set off 
 
 Kernel command line 
 ===================
@@ -197,7 +211,7 @@ In the directory where the kernel package is built:
 
 This directory will provide the tools to create the keys, as well as signing kernel modules.
 
-  * Copy these files into certs-local directory:
+* Copy these files into certs-local directory:
 
 .. code-block:: bash
 
@@ -383,9 +397,9 @@ kernel to 3 commands to *Update*, *Build* and *Install* a kernel.
 
 .. code-block:: bash
 
-        abk -u kernel-name
-        abk -b kernel-name
-        abk -i kernel-name
+    abk -u kernel-name
+    abk -b kernel-name
+    abk -i kernel-name
 
 For more information see `Arch-SKM-README`_ and example `Arch-SKM-PKGBUIILD`_
 
@@ -398,7 +412,20 @@ For more information see `Arch-SKM-README`_ and example `Arch-SKM-PKGBUIILD`_
 License
 #######
 
-Created by Gene C. and licensed under the terms of the MIT license.
+#############
+Older Changes
+#############
 
- * SPDX-License-Identifier: MIT  
- * Copyright (c) 2020-2023, Gene C
+* Tidy and Improve code:
+
+    * PEP-8, PEP-257, PEP-484 PEP-561
+    * Refactor
+
+ * Add tests : run pytest in the *tests* directory.
+   
+   This will locate and use a kernel provided tool:
+   /usr/lib/modules/xxx/build/scripts/sign-file
+
+ * key and hash types are now read from the kernel config file. Keeps everything consistent.
+ * Code re-org with supporing modules now moved to lib/xxx.py
+ * Code works with hash type sha3-xxx (e.g. *sha3-512*) available in kernel 6.7 and openssl 3.2 or later.

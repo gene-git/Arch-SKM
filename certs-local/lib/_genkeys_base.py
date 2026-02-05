@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: © 2020-present Gene C <arch@sapience.com>
 """
  Main class for genkeys
 """
@@ -36,6 +36,12 @@ class GenKeysBase:
 
         self.verb = False
         self.refresh = '7d'
+        #
+        # ktype : rsa (avoid) ec, 
+        #   prelim support for ml-dsa-44, ml-dsa-65, ml-dsa-87
+        #   Kernel linux-next has veryify for ml-dsa-NN (linux-next 260215)
+        #   but no signing - only verify (our default remains 'ec'
+        #
         self.khash = 'sha512'
         self.ktype = 'ec'
         self.kconfig_list: list[str] = []

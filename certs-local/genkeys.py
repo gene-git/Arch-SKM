@@ -1,6 +1,6 @@
 #!/usr/bin/python
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: © 2020-present Gene C <arch@sapience.com>
 """
 Create new pub/priv key pair for signing out of tree kernel modules.
 
@@ -15,13 +15,18 @@ Args:
              default is 7days. Units may be abbreviateed using
              one of secs, mins, hours, days or weeks
   khash    - sets hash (default is sha512)
-  ktype    - rsa or ec (default is ec)
+  ktype    - rsa 
+           - ec (default)
+           - mk-dsa-44, mk-dsa-65, ml-dsa-87 (mk-dsa-65 is reasonable for PQC)
+           - kernel is adding ml-dsa-NN but no hybrid (ml-dsa-65 + ed25519)
+             when they do we will follow suit. For now we support mlk-ds-NN
+            
   config   - config file to update with signing key. May contain wildcard
              e.g. --config config
                   --config ../configs/config.*
 
  NB:
-   We always check the config - even if not refreshing keys to
+   We always check th config - even if not refreshing keys to
    be sure it has the current signing key.
 
   Default refresh key is 7 days

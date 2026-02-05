@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: © 2020-present  Gene C <arch@sapience.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileCopyrightText: © 2020-present Gene C <arch@sapience.com>
 """
  Check if time to make new keys
 """
@@ -18,6 +18,9 @@ def _read_current_khash(cert_dir: str) -> str:
     """
     khash = ''
     khash_path = os.path.join(cert_dir, 'current', 'khash')
+    if not os.path.exists(khash_path):
+        return khash
+
     fob = open_file(khash_path, 'r')
     if fob:
         khash = fob.read()
@@ -49,7 +52,7 @@ def refresh_needed(genkeys: GenKeysBase):
     #
     khash_current = _read_current_khash(genkeys.cert_dir)
     if not khash_current or khash_current != genkeys.khash:
-        print('Current hash doesnt match kernel config - updating')
+        print('Current hash missing or doesnt doesnt match kernel config - updating')
         return True
     #
     # Has clock expired - get the refresh time

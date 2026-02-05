@@ -36,27 +36,27 @@ class TestKeys:
     """
     Hash test class
     """
-    def test_01_genkeys(self):
+    def test_01_genkeys_ec(self):
         """
         Generate keys
         """
         pargs = ['./certs-local/genkeys.py']
-        pargs += ['-c', './config']
+        pargs += ['-c', './config-ec']
         (rc, stdout, _stderr) = run_prog(pargs)
         assert rc == 0
         assert 'Success: all done' in stdout
 
-    def test_02_refresh(self):
+    def test_02_refresh_ec(self):
         """
         Key refresh should not be needed
         """
         pargs = ['./certs-local/genkeys.py']
-        pargs += ['-c', './config', '-r', '7d', '-v']
+        pargs += ['-c', './config-ec', '-r', '7d', '-v']
         (rc, stdout, _stderr) = run_prog(pargs)
         assert rc == 0
         assert 'Key refresh not needed' in stdout
 
-    def test_03_sign_modules(self):
+    def test_03_sign_modules_ec(self):
         """
         Sign sample modules
         """
