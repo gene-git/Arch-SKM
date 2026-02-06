@@ -5,13 +5,13 @@ kernel-sign
 Overview
 ========
 
-Signed kernel modules provide a mechanism for the kernel to verify the integrity of a module.
-This package provides the tools needed to build a kernel supporting signed 
+Signed kernel modules allow the kernel to verify the integrity of a module before loading it.
+This package provides the tools and information needed to build a kernel that supports signed 
 *out of tree* (OOT) modules. An OOT module is any kernel module that is not 
 part of the upstream Linux kernel itself.
 
-All git tags are signed with arch@sapience.com key which is available via WKD
-or download from https://www.sapience.com/tech.
+Note that all git tags are signed with arch@sapience.com key which is available via WKD
+or for download from https://www.sapience.com/tech.
 
 Latest Changes
 --------------
@@ -20,7 +20,7 @@ Latest Changes
 
 * Preliminary support for **ml-dsa-44**, **ml-dsa-65** and **ml-dsa-87**
 
-  These are the NIST approved post quantum compiting algorithms.
+  These are the NIST approved post quantum computing algorithms.
 
   linux-next (as of 20260205) supports verifying signatures signed using ml-dsa-nn.
   This version of *kernel-sign* will generate keys for those ml-dsa-nn algorithms 
@@ -40,29 +40,21 @@ Latest Changes
 
 * pkg-install script updated.
 
-  byte compile the python code and remove any no-longer needed files.
+  Byte compile the python code and remove any no-longer needed files.
 
 
-Available 
-=========
+Where to get Kernel-Sign 
+========================
 
-The current version of Kernel-Sign is in Github repo:
+Kernel-Sign is available in the Github repo:
 
-* `Kernel_Sign`_ - includes documentation pdf.
+* `Kernel_Sign`_ - This is the current version and includes the documentation pdf file.
 
 Also see:
 
 * `Kernel Docs`_  - upstream kernel documentation on module signing.
-* `Arch Wiki`_  - this may not keep be up to date.
+* `Arch Wiki`_  - this may not always be up to date.
 
-.. _`Kernel_Sign`: https://github.com/gene-git/arch-skm
-.. _`Arch Wiki`: https://wiki.archlinux.org/title/Signed_kernel_modules
-.. _`Kernel Docs`: https://docs.kernel.org/admin-guide/module-signing.html
-.. _`DKMS`: https://wiki.archlinux.org/index.php/DKMS). 
-.. _`virtualbox-guest-modules-arch`: https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch) 
-.. _`Arch Wiki Kernel Parameters`: https://wiki.archlinux.org/index.php/Kernel_parameters
-.. _`Kernel/Arch Build System`: https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System
-.. _`tainted_kernel`: https://docs.kernel.org/admin-guide/tainted-kernels.html
 
 ############
 Introduction 
@@ -71,20 +63,24 @@ Introduction
 Kernel Modules
 ==============
 
-The Linux kernel distinguishes and keeps separate the verification of modules from requiring or 
-forcing modules to verify before allowing them to be loaded. Kernel modules fall into 2 classes:
+Linux kernel module verification can be made a requirement, thereby 
+forcing modules to be verified before allowing them to be loaded. 
 
-Standard "in tree" modules which come with the kernel source code. They are compiled during the 
+At a high level there are 2 classes of Kernel modules:
+
+Standard **in tree** modules: these come with the kernel source code and are compiled during a 
 normal kernel build.
 
-Out of tree modules which are not part of the kernel source distribution. They are built outside 
-of the kernel tree, requiring the kernel headers package for each kernel they are to be built for. 
+**Out of tree** (OOT) modules: thse are not part of the kernel source and are built outside 
+of the kernel tree. They require the kernel headers for each kernel they are built for. 
 They can be built manually for a specific kernel and packaged, or they can be built whenever 
-needed using DKMS `DKMS`_ 
+needed by using dynamic kernel module support (DKMS) `DKMS`_ 
 
-Examples of such packages, provided by Arch, include:
+Some examples of such modules include:
 
-* Virtual gues modules `virtualbox-guest-modules-arch`_ 
+* `Virtual Box <https://www.archlinux.org/packages/?name=virtualbox-guest-modules-arch>`_ guest modules.
+* `ZFS File System <https://wiki.archlinux.org/title/ZFS>`_ modules.
+* `Nvidia Propietry Driver <https://wiki.archlinux.org/title/NVIDIA>`_ modules.
     
 During a standard kernel compilation, the kernel build tools create a private/public key pair and 
 sign every in tree module (using the private key). The public key is saved in the kernel itself. 
@@ -114,7 +110,9 @@ Note: The goal is to have:
 
   The standard kernel build creates a fresh public/private key pair on each build.
 
-* Out of tree modules are signed and the associated public key is compiled in to the kernel.
+* Out of tree modules are signed using separate private key
+ 
+  The OOT companion public key is made available to the kernel.
   We will create a separate public/private key pair on each build.
 
 Summary of what needs to be done 
@@ -130,7 +128,7 @@ A kernel config parameter is now used to make kernel aware of additional signing
 Keys and signing tools will be stored in current module build directory. Nothing needs to be done to 
 clean this as removal is handled by the standard module cleanup. 
 
-Certs are thus installed in ::
+Certs are thus installed in::
 
     /usr/lib/modules/<kernel-vers>-<build>/certs-local.  
 
@@ -161,30 +159,30 @@ It is preferable to use elliptic curve type keys and zstd compression.
   If you are comfortable all is working then by all means change this to 'y'
   Command line version of this is : module.sig_enforce=1
 
- * CONFIG_MODULE_SIG_HASH=sha512
+* CONFIG_MODULE_SIG_HASH=sha512
 
-   Automatically sign all modules  -> activate
-   Which hash algorithm    -> SHA-512
+  Automatically sign all modules  -> activate
+  Which hash algorithm    -> SHA-512
 
-   kernel 6.7 and later support sha3 hashes. The preferred hash choice is then
-   sha3-512. This also requires openssl version 3.2 or newer.
+  kernel 6.7 and later support sha3 hashes. The preferred hash choice is then
+  sha3-512. This also requires openssl version 3.2 or newer.
 
 
- * CONFIG_MODULE_COMPRESS_ZSTD=y
+* CONFIG_MODULE_COMPRESS_ZSTD=y
 
-   Compress modules on installation -> activate
-   Compression algorithm (ZSTD)
+  Compress modules on installation -> activate
+  Compression algorithm (ZSTD)
 
- * CONFIG_MODULE_SIG_KEY_TYPE_ECDSA=y
+* CONFIG_MODULE_SIG_KEY_TYPE_ECDSA=y
 
-   Cryptographic API --->
-   Certificates for Signature Checking --->
-   Type of module signing key to be generated -> ECDSA
+  Cryptographic API --->
+  Certificates for Signature Checking --->
+  Type of module signing key to be generated -> ECDSA
 
- * CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
+* CONFIG_MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS=n
 
-   Enable Loadable module support --->
-   Allow loading of modules with missing namespace imports -> set off 
+  Enable Loadable module support --->
+  Allow loading of modules with missing namespace imports -> set off 
 
 Kernel command line 
 ===================
@@ -197,72 +195,117 @@ require that the kernel only permit verified modules to be loaded:
     module.sig_enforce=1
 
 ############
-Tools needed 
+Installation 
 ############
 
 kernel build package 
 ====================
 
-In the directory where the kernel package is built:
+Use the *pkg-install* script from the repo to install *kernel-sign*. 
+
+The script takes one optional argument, which is the destination directory
+where the source is to be installed. 
+If script is run by root, then the destinaion defaults to **/**.
 
 .. code-block:: bash
 
-    mkdir certs-local
+   ./pkg-install
 
-This directory will provide the tools to create the keys, as well as signing kernel modules.
+This installs the source files and documentation into */usr/src/kernel-sign*. 
+and *dkms* helper tools into */etc/dkms*
 
-* Copy these files into certs-local directory:
+
+Building Kernel
+===============
+
+After *kernel-sign* is installed it can now be used during kernel builds.
+There are 3 things needed to be done to support signed kernel modules.
+
+* Have a copy of *certs-local* in the same directory as the kernel PKGBUILD
+
+  This will also where the keys used for module signing will be saved.
+
+* Generate new keys periodcally.
+
+To achieve this edit the PKGBUILD and add this to the *prepare()* function:
 
 .. code-block:: bash
 
-        genkeys.py
-        install-certs.py
-        sign_module.py
-        lib/*.py
-        x509.oot.genkey
+   echo "Gewnerate OOT Modules signing keys ..."
+   /usr/src/kernel-sign/kernel-sign-update
+   ./certs-local/genkeys.py -v --config ./config --refresh 30d
 
-genkey.py & x509.oot.genkey
-===========================
 
-genkey.py along with its configuration file x509.oot.genkey are used to create key pairs.
-It also provides the kernel with the key to sign out of tree modules by updating the config file 
-used to build the kernel.
+*kernel-sign-update* copies *certs-local* from */usr/src/kernel-sign* and 
+this ensures that copy in the kernel build area is kept up to date.
 
-genkeys.py will create the key pairs in a directory named by date-time. It defaults to refreshing
+*config* is the usual kernel config file and is used generate new signing keys 
+every 30 days. The hash and key types are taken from the kernel config this
+ensures that the hash and key algos are used to sign in-tree modules are 
+also used to sign the OOT modules. The OOT modules ure signed with a 
+separate signing key.
+
+* Install the OOT certs into the kernel build directory:
+
+  At the end of the _package-headers() function add:
+
+  
+.. code-block:: bash
+
+    echo "Install OOT Modules Signing certs ..."
+    certs_local_src="$startdir/certs-local"
+    certs_local_dst="${builddir}/certs-local"
+    $certs_local_src/install-certs.py $certs_local_dst
+
+The kernel will use the certificate (public key) to validate signed OOT modules.
+The certs are installed into */usr/lib/modules/<kernel-version>/build/certs-local/*.
+
+More Details
+============
+
+genkeys.py
+----------
+
+genkeys.py reads the file *x509.oot.genkey* to create key pairs. This is similar
+to how the in-tree modules work.
+
+It also updates the config file with the OOT signing key information so that the 
+kernel can verify signed OOT modules.
+
+Key pairs are created in a directory named by date-time. It defaults to refreshing
 the keys every 7 days but this can be changed with the *--refresh* command line option.
 
-It also creates a soft link named 'current' which points to the newly created directory with the 'current' keys.
-The actual key directory is named by date and time.
+It also creates a symlink named 'current' that points to the newly created directory with 
+the 'current' keys.
 
-genkeys will check and update kernel configs given by the  --config config(s) option. This takes either a single
-config file, or a shell glob for mulitple files. e.g. --config 'conf/config.*'. Remember to quote any wildcard 
+It checks and updates kernel configs given by the *--config config(s)* option. This can be either a single
+config file, or a shell glob for mulitple files. e.g. *--config 'conf/config.*'*. Remember to quote any wildcard 
 characters to prevent the shell from expanding them. 
  
 All configs will be updated with the same key. The default keytype and hash are taken from 
-the kernel config (from CONFIG_MODULE_SIG_HASH and CONFIG_MODULE_SIG_KEY_TYPE_xxx) [1]_.
+the kernel config (CONFIG_MODULE_SIG_HASH and CONFIG_MODULE_SIG_KEY_TYPE_xxx).
 
-If multiple kernel configs are being used, all must use same key and hash types.
-
-.. [1] In earlier versions these defaulted to elliptic curve and sha512 and could be set from
-   the command line.
+If multiple kernel configs are being used, they must all use same key and hash types.
 
 sign_module.py 
-==============
+--------------
 
-signs out of tree kernel modules. It can be run manually but is typically invoked 
-by dkms/kernel-sign.sh. It handles modules compressed with zstd, xz and gzip and depends on 
-python-zstandard package to help with those compressed with zstd. 
+This tool signs out of tree kernel modules. It can be run manually but is typically invoked 
+from */etc/dkms/kernel-sign.sh*. 
+
+It can handle uncompressed modules as well as those compressed with zstd, xz or gzip.
+It depends on python-zstandard package to do so.
 
 install-certs.py
-================
+----------------
 
-is called from the package_headers() function of PKGBUILD to install the signing keys. 
+This is called from the package_headers() function of PKGBUILD to install the signing keys. 
 Example is given below. 
   
 These files are all provided.
 
 dkms support
-================
+=============
 
 **Important**
 
@@ -271,21 +314,11 @@ It is one thing to use signed modules provided in the kernel source but it is qu
 another to use modules, signed or not, that are out-of-tree. Any such module will
 *taint* the kernel. See kernel docs `tainted_kernel`_ for more information.
 
-.. code-block:: bash
+The tools installed in /etc/dkms provide the mechanism for dkms to automatically sign 
+modules using the local keys discussed above. 
 
-    mkdir certs-local/dkms
-
-and add 2 files to the dkms dir:
-
-.. code-block:: bash
-
-        kernel-sign.conf
-        kernel-sign.sh
-
-These will be installed in /etc/dkms and provide a mechanism for dkms to automatically sign 
-modules using the local key discussed above - this is the reccommended way to sign kernel modules. 
-As explained, below - once this is installed - all that is needed to have dkms automatically 
-sign modules is to make a soft link:
+This is the reccommended way to sign OOT kernel modules. 
+All that is needed for dkms to automatically sign modules is to make a soft link:
 
 .. code-block:: bash
 
@@ -293,94 +326,40 @@ sign modules is to make a soft link:
         ln -s kernel-sign.conf <module-name>.conf
 
 For example:
+
 .. code-block:: bash
 
         ln -s kernel-sign.conf vboxdrv.conf
 
 The link creation can easily be added to an arch package to simplify further if desired.
 
-###############
-Modify PKGBUILD 
-###############
-
-What to change
-==============
-
-We need to make changes to kernel build as follows:
-
-prepare()
-=========
-
-Add the following to the top of the prepare() function:
-
-.. code-block:: bash
-
-    prepare() {
-     ...
-        echo "Rebuilding local signing key..."
-        # adjust cerdir as needed 
-        certdir='../certs-local'
-        $certdir/genkeys.py -v --config ../config --refresh 30d
-      ... 
-    }
-
-The default key regeneration refresh period is 7 days, but this can be changed on the command line. 
-If you want to create new keys monthly, then use "--refresh 30days" as an option to genekeys.py. 
-You can refresh on every build by using "--refresh always". 
-Refresh units can be seconds,minutes,hours,days or weeks. 
-
-_package-headers() 
-==================
-
-  Add the following to the bottom of the _package-headers() function:
-
-.. code-block:: bash
-
-    _package-headers() {
-
-    ...
-
-    #
-    # Out of Tree Module signing
-    # This is run in the kernel source / build directory
-    #
-    echo "Local Signing certs for out of tree modules..."
-      
-    certs_local_src="../../certs-local" 
-    certs_local_dst="${builddir}/certs-local"
-
-    ${certs_local_src}/install-certs.py $certs_local_dst
-
-    # install dkms tools if needed
-    dkms_src="$certs_local_src/dkms"
-    dkms_dst="${pkgdir}/etc/dkms"
-    mkdir -p $dkms_dst
-
-    rsync -a $dkms_src/{kernel-sign.conf,kernel-sign.sh} $dkms_dst/
-    }
 
 ##############
 Required Files
 ##############
 
-This is the list of files referenced above. Remember to make scripts executable.
+This is a list of the required files installed in *certs-local*:
 
-  * certs-local/genkeys.py
-  * certs-local/install-certs.py
-  * certs-local/x509.oot.genkey
-  * certs-local/sign_module.py
+* genkeys.py
+* install-certs.py
+* sign_module.py
+* x509.oot.genkey
+* lib/class_genkeys.py
+* lib/_genkeys_base.py
+* lib/get_key_hash.py
+* lib/__init__.py
+* lib/make_keys.py
+* lib/refresh_needed.py
+* lib/run_prog_copy.py
+* lib/run_prog_local.py
+* lib/signer_class.py
+* lib/update_config.py
+* lib/utils.py
 
-  * certs-local/lib/arg_parse.py
-  * certs-local/lib/refresh_needed.py
-  * certs-local/lib/class_genkeys.py
-  * certs-local/lib/get_key_hash.py
-  * certs-local/lib/make_keys.py
-  * certs-local/lib/signer_class.py
-  * certs-local/lib/update_config.py
-  * certs-local/lib/utils.py
+And those in */etc/dkms*:
 
-  * certs-local/dkms/kernel-sign.conf
-  * certs-local/dkms/kernel-sign.sh
+* kernel-sign.sh
+* kernel-sign.conf
 
 ################
 Arch AUR packags
@@ -408,9 +387,6 @@ For more information see `Arch-SKM-README`_ and example `Arch-SKM-PKGBUIILD`_
 .. _`Arch-SKM-README`:  https://github.com/itoffshore/Arch-SKM/blob/master/README.scripts.md
 .. _`Arch-SKM-PKGBUIILD`: https://github.com/itoffshore/Arch-SKM/blob/master/Arch-Linux-PKGBUILD-example
 
-#######
-License
-#######
 
 #############
 Older Changes
@@ -429,3 +405,11 @@ Older Changes
  * key and hash types are now read from the kernel config file. Keeps everything consistent.
  * Code re-org with supporing modules now moved to lib/xxx.py
  * Code works with hash type sha3-xxx (e.g. *sha3-512*) available in kernel 6.7 and openssl 3.2 or later.
+
+.. _`Kernel_Sign`: https://github.com/gene-git/arch-skm
+.. _`Arch Wiki`: https://wiki.archlinux.org/title/Signed_kernel_modules
+.. _`Kernel Docs`: https://docs.kernel.org/admin-guide/module-signing.html
+.. _`DKMS`: https://wiki.archlinux.org/index.php/DKMS). 
+.. _`Arch Wiki Kernel Parameters`: https://wiki.archlinux.org/index.php/Kernel_parameters
+.. _`Kernel/Arch Build System`: https://wiki.archlinux.org/index.php/Kernel/Arch_Build_System
+.. _`tainted_kernel`: https://docs.kernel.org/admin-guide/tainted-kernels.html
