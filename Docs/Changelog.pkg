@@ -1,0 +1,55 @@
+-------------------------------------------------------
+ Changelog    : arch-skm
+ Tags         : 4.2.0 ➙ 5.0.1
+              : 2025-06-20 ➙ 2026-02-06
+              : 6 tags. See Docs for full changelog
+-------------------------------------------------------
+
+ 2026-02-06   : 5.0.1
+              - Update pkg-install script and README
+ 2026-02-05   ⋯
+              - update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2026-02-05   : 5.0.0
+                  - Version 5.0
+            
+                    * Preliminary support for ml-dsa-44, ml-dsa-65 and ml-dsa-87
+            
+                      These are the NIST approved post quantum compiting algorithms.
+            
+                      linux-next (as of 20260205) supports verifying signatures signed using ml-dsa-nn.
+                      This version of kernel-sign will generate keys for those ml-dsa-nn algorithms
+                      if specified in the kernel config.
+            
+                      We rely on the signing tool that is provided by the kernel itself to sign
+                      any OOT kernel modules. Therefore, once the kernel tool supports signing
+                      with ml-dsa, then we will too.
+            
+                    * Note: A future version may require the pyconcurrent module.
+            
+                      Its a lttle extra maintenance keeping duplicate code. For now,
+                      we will use the pyconcurrent module if available otherwise we use a
+                      local copy of the part we need.
+            
+                    * License updated to GPL version 2 or later.
+            
+                    * pkg-install update - byte compile python
+            
+                    * kernel-sign-update - remove unused code from certs-local/lib
+ 2025-06-26   ⋯
+              - update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-06-26   : 4.4.0
+              - If pyconcurrent module available use its run_prog() else use local copy.
+ 2025-06-22   ⋯
+              - update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-06-22   : 4.3.0
+              - run_prog: sync with latest from pyconcurrent
+ 2025-06-20   ⋯
+              - update Docs/Changelogs Docs/kernel-sign.pdf
+
+ 2025-06-20   : 4.2.0
+              - Pull local copy of latest run_prog from pyconcurrent
+ 2025-05-21   ⋯
+              - update Docs/Changelogs Docs/kernel-sign.pdf
