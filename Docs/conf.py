@@ -6,7 +6,7 @@
 project = "kernel-sign"
 copyright = '2023-present, Gene C'
 author = 'Gene C'
-release = "5.0.1"
+release = "5.0.2"
 
 #extensions = ['myst_parser']
 extensions = []

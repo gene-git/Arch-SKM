@@ -1,9 +1,12 @@
 -------------------------------------------------------
  Changelog    : arch-skm
- Tags         : 4.2.0 ➙ 5.0.1
-              : 2025-06-20 ➙ 2026-02-06
+ Tags         : 4.3.0 ➙ 5.0.2, origin/master
+              : 2025-06-22 ➙ 2026-02-06
               : 6 tags. See Docs for full changelog
 -------------------------------------------------------
+
+ 2026-02-06   : 5.0.2, origin/master
+              - update Docs/Changelogs Docs/kernel-sign.pdf
 
  2026-02-06   : 5.0.1
               - Update pkg-install script and README
@@ -47,9 +50,4 @@
  2025-06-22   : 4.3.0
               - run_prog: sync with latest from pyconcurrent
  2025-06-20   ⋯
-              - update Docs/Changelogs Docs/kernel-sign.pdf
-
- 2025-06-20   : 4.2.0
-              - Pull local copy of latest run_prog from pyconcurrent
- 2025-05-21   ⋯
               - update Docs/Changelogs Docs/kernel-sign.pdf

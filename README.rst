@@ -219,15 +219,15 @@ Building Kernel
 ===============
 
 After *kernel-sign* is installed it can now be used during kernel builds.
-There are 3 things needed to be done to support signed kernel modules.
+There are 3 things needed in the PKGBUILD to support signed kernel modules.
 
-* Have a copy of *certs-local* in the same directory as the kernel PKGBUILD
+* Having a copy of *certs-local* in the same directory as the kernel PKGBUILD
 
-  This will also where the keys used for module signing will be saved.
+  This has tools and the keys used to sign the modules.
 
 * Generate new keys periodcally.
 
-To achieve this edit the PKGBUILD and add this to the *prepare()* function:
+To achieve these 2 items, edit the PKGBUILD and add this to the *prepare()* function:
 
 .. code-block:: bash
 
@@ -236,14 +236,16 @@ To achieve this edit the PKGBUILD and add this to the *prepare()* function:
    ./certs-local/genkeys.py -v --config ./config --refresh 30d
 
 
-*kernel-sign-update* copies *certs-local* from */usr/src/kernel-sign* and 
-this ensures that copy in the kernel build area is kept up to date.
+*kernel-sign-update* makes a copy of *certs-local* from the source */usr/src/kernel-sign* and 
+ensures that it is kept up to date.
 
 *config* is the usual kernel config file and is used generate new signing keys 
 every 30 days. The hash and key types are taken from the kernel config this
 ensures that the hash and key algos are used to sign in-tree modules are 
 also used to sign the OOT modules. The OOT modules ure signed with a 
 separate signing key.
+
+The 3rd item is:
 
 * Install the OOT certs into the kernel build directory:
 
@@ -259,6 +261,12 @@ separate signing key.
 
 The kernel will use the certificate (public key) to validate signed OOT modules.
 The certs are installed into */usr/lib/modules/<kernel-version>/build/certs-local/*.
+
+When the kernel package is built, it will now have all the tools, keys and certs required
+for OOT module signing.
+
+The last item is to use these to sign any OOT modules which is discussed below in the
+`Signing with DKMS`_ section.
 
 More Details
 ============
@@ -304,8 +312,8 @@ Example is given below.
   
 These files are all provided.
 
-dkms support
-=============
+Signing with DKMS
+===========-----=
 
 **Important**
 
@@ -394,8 +402,8 @@ Older Changes
 
 * Tidy and Improve code:
 
-    * PEP-8, PEP-257, PEP-484 PEP-561
-    * Refactor
+  * PEP-8, PEP-257, PEP-484 PEP-561
+  * Refactor
 
  * Add tests : run pytest in the *tests* directory.
    

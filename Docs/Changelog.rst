@@ -6,12 +6,18 @@ Tags
 
 .. code-block:: text
 
-	0.1.0 (2019-11-10) -> 5.0.1 (2026-02-06)
-	116 commits.
+	0.1.0 (2019-11-10) -> 5.0.2, origin/master (2026-02-06)
+	117 commits.
 
 Commits
 =======
 
+
+* 2026-02-06  : **5.0.2, origin/master**
+
+.. code-block:: text
+
+              - update Docs/Changelogs Docs/kernel-sign.pdf
 
 * 2026-02-06  : **5.0.1**
 
